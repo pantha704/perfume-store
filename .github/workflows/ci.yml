@@ -32,3 +32,11 @@ jobs:
       - run: npm run build:cf
       - run: npx playwright install --with-deps chromium webkit
       - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
