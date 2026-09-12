@@ -12,7 +12,9 @@ const csp = [
   "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://challenges.cloudflare.com https://*.posthog.com",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com https://challenges.cloudflare.com https://*.posthog.com",
   "frame-src https://api.razorpay.com https://checkout.razorpay.com https://challenges.cloudflare.com",
-  "upgrade-insecure-requests"
+  // Only upgrade to HTTPS in production builds; in dev (plain http server) this
+  // directive forces chunks/navigations onto https and the dev server 403s them.
+  ...(process.env.NODE_ENV === "production" ? ["upgrade-insecure-requests"] : [])
 ].join("; ");
 
 const securityHeaders = [
