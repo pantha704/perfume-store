@@ -1,0 +1,5 @@
+import { expect, test } from "@playwright/test";
+
+test("homepage composes a cinematic first viewport without horizontal overflow",async({page})=>{await page.goto("/");await expect(page.getByRole("heading",{name:/Leave/i})).toBeVisible();const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth+1);expect(overflow).toBeFalsy();});
+test("catalogue to cart remains usable without animation",async({page})=>{await page.emulateMedia({reducedMotion:"reduce"});await page.goto("/product/nocturne-01");await page.getByRole("button",{name:/Add ·/}).click();await page.goto("/cart");await expect(page.getByText("Nocturne 01").first()).toBeVisible();});
+test("quiz core path works as a normal GET form",async({page})=>{await page.goto("/quiz");const values=["Woody","close","monsoon","office","dry","sweet"];for(const value of values)await page.locator(`input[value="${value}"]`).check();await page.getByRole("button",{name:/Build my edit/}).click();await expect(page.getByText("Start with these three.")).toBeVisible();});

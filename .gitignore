@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.open-next/
+.wrangler/
+.env
+.env.local
+.dev.vars
+*.log
+playwright-report/
+test-results/
+coverage/
+.DS_Store

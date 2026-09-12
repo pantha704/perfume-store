@@ -1,0 +1,6 @@
+import test from "node:test";import assert from "node:assert/strict";import fs from "node:fs";
+const read=(p)=>fs.readFileSync(p,"utf8");
+test("razorpay webhook verifies raw body before JSON parsing",()=>{const s=read("app/api/payments/webhook/route.ts");assert.ok(s.indexOf("request.text()")>=0&&s.indexOf("request.text()")<s.indexOf("JSON.parse(raw)"));assert.match(s,/verifyWebhookSignature/);assert.match(s,/webhook_events/);});
+test("guest tracking hashes private token",()=>{const s=read("lib/order-service.ts");assert.match(s,/createHash\("sha256"\)/);assert.match(s,/guest_access_hash/);assert.doesNotMatch(s,/guest_access_token/);});
+test("RLS is enabled across operational schema",()=>{const s=read("supabase/migrations/0001_schema.sql");for(const table of ["profiles","addresses","products","variants","orders","order_items","webhook_events","analytics_events","audit_log"])assert.match(s,new RegExp(`alter table public\\.${table} enable row level security`));});
+test("sample configuration does not contain obvious live secrets",()=>{const joined=[".env.example",".dev.vars.example","wrangler.jsonc"].map(read).join("\n");assert.doesNotMatch(joined,/rzp_live_[A-Za-z0-9]{8,}/);assert.doesNotMatch(joined,/eyJ[a-zA-Z0-9_-]{30,}\./);assert.match(joined,/FULFILLMENT_LIVE_ENABLED=false/);});
