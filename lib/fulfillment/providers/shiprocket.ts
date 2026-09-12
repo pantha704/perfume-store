@@ -4,6 +4,12 @@ import type { FulfillmentProvider, FulfillmentStatusResult } from "@/lib/fulfill
 let cachedToken: { token: string; expiresAt: number } | null = null;
 const base = () => runtimeEnv("SHIPROCKET_API_BASE", "https://apiv2.shiprocket.in/v1/external").replace(/\/$/, "");
 
+interface ShiprocketCourier { courier_company_id?: string | number; courier_name?: string; rate?: string | number; etd?: string }
+interface ShiprocketServiceabilityResponse { data?: { available_courier_companies?: ShiprocketCourier[] } }
+interface ShiprocketOrderResponse { shipment_id?: string | number; order_id?: string | number; awb_code?: string }
+interface ShiprocketTracking { shipment_status?: string; track_status?: string; awb_code?: string; track_url?: string; etd?: string }
+interface ShiprocketTrackResponse extends ShiprocketTracking { tracking_data?: ShiprocketTracking }
+
 async function token(): Promise<string> {
   if (cachedToken && cachedToken.expiresAt > Date.now()) return cachedToken.token;
   const email = runtimeEnv("SHIPROCKET_EMAIL");
@@ -40,9 +46,9 @@ export const shiprocketProvider: FulfillmentProvider = {
   async quote(request) {
     const weightKg = Math.max(0.5, request.lines.reduce((sum, line) => sum + (line.weightGrams || 250) * line.quantity, 0) / 1000);
     const params = new URLSearchParams({ pickup_postcode: runtimeEnv("SHIPROCKET_PICKUP_POSTCODE"), delivery_postcode: request.address.postalCode, weight: weightKg.toFixed(2), cod: "0" });
-    const raw = await sr<Record<string, any>>(`/courier/serviceability/?${params}`);
+    const raw = await sr<ShiprocketServiceabilityResponse>(`/courier/serviceability/?${params}`);
     const couriers = raw?.data?.available_courier_companies || [];
-    return couriers.slice(0, 5).map((c: any) => ({ provider: "shiprocket" as const, serviceCode: String(c.courier_company_id), serviceName: String(c.courier_name), amountPaise: Math.round(Number(c.rate || 0) * 100), estimatedDelivery: c.etd || null, raw: c }));
+    return couriers.slice(0, 5).map((c) => ({ provider: "shiprocket" as const, serviceCode: String(c.courier_company_id), serviceName: String(c.courier_name), amountPaise: Math.round(Number(c.rate || 0) * 100), estimatedDelivery: c.etd || null, raw: c }));
   },
   async create(request) {
     const body = {
@@ -51,12 +57,13 @@ export const shiprocketProvider: FulfillmentProvider = {
       order_items: request.lines.map((line) => ({ name: line.name, sku: line.sku, units: line.quantity, selling_price: (line.unitPricePaise / 100).toFixed(2) })), payment_method: request.paymentMethod === "cod" ? "COD" : "Prepaid",
       sub_total: (request.lines.reduce((s, line) => s + line.unitPricePaise * line.quantity, 0) / 100).toFixed(2), length: 12, breadth: 8, height: 16, weight: Math.max(0.5, request.lines.reduce((s, line) => s + (line.weightGrams || 250) * line.quantity, 0) / 1000), comment: request.gift?.note ? `Gift order. Note: ${request.gift.note.slice(0, 160)}` : `Website order ${request.orderId}`,
     };
-    const raw = await sr<Record<string, any>>("/orders/create/adhoc", { method: "POST", body: JSON.stringify(body) });
+    const raw = await sr<ShiprocketOrderResponse>("/orders/create/adhoc", { method: "POST", body: JSON.stringify(body) });
     return { provider: "shiprocket", providerOrderId: String(raw.shipment_id || raw.order_id || request.orderId), status: "submitted", trackingNumber: raw.awb_code || null, raw };
   },
   async getStatus(providerOrderId) {
-    const raw = await sr<Record<string, any>>(`/courier/track/shipment/${encodeURIComponent(providerOrderId)}`);
-    const tracking = raw?.tracking_data || raw?.[0]?.tracking_data || raw;
+    const raw = await sr<ShiprocketTrackResponse | ShiprocketTrackResponse[]>(`/courier/track/shipment/${encodeURIComponent(providerOrderId)}`);
+    const candidate = Array.isArray(raw) ? raw[0] : raw;
+    const tracking: ShiprocketTracking | undefined = candidate?.tracking_data || candidate;
     return { provider: "shiprocket", providerOrderId, status: mapStatus(tracking?.shipment_status || tracking?.track_status), trackingNumber: tracking?.awb_code || null, trackingUrl: tracking?.track_url || null, estimatedDelivery: tracking?.etd || null, raw };
   },
   async cancel(providerOrderId) { await sr("/orders/cancel", { method: "POST", body: JSON.stringify({ ids: [Number(providerOrderId) || providerOrderId] }) }); },

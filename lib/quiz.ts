@@ -33,5 +33,5 @@ export function scoreQuiz(products: Product[], answers: QuizAnswers): Array<{ pr
     if (avoid && avoid !== "sweet" && haystack.includes(avoid)) score -= 6;
     const reason = `Because you leaned ${answers.family || "toward this family"}, ${answers.intensity || "balanced"} in presence, and ${answers.mood || "textural"}: ${product.performance.wearsLike}.`;
     return { product, score, reason };
-  }).sort((a,b)=>b.score-a.score);
+  }).sort((a,b)=>b.score-a.score).slice(0, 3);
 }

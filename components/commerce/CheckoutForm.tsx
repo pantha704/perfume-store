@@ -1,9 +1,9 @@
 "use client";
 import Script from "next/script";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import type { Product } from "@/lib/types";
-import { clearCart, readCart, type ClientCartLine } from "@/lib/client/cart";
+import { clearCart, getCartSnapshot, getServerCartSnapshot, subscribeCart, type ClientCartLine } from "@/lib/client/cart";
 import { formatINR } from "@/lib/money";
 import { sendEvent } from "@/components/layout/AnalyticsPageView";
 import { TurnstileWidget } from "@/components/commerce/TurnstileWidget";
@@ -15,13 +15,13 @@ declare global {
 
 export function CheckoutForm({ products, turnstileSiteKey }: { products: Product[]; turnstileSiteKey?: string }) {
   const router = useRouter();
-  const [cart,setCart]=useState<ClientCartLine[]>([]);
+  const cart=useSyncExternalStore(subscribeCart,getCartSnapshot,getServerCartSnapshot);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState("");
   const [token,setToken]=useState("");
   const [gift,setGift]=useState(false);
   const [applyCredit,setApplyCredit]=useState(true);
-  useEffect(()=>{setCart(readCart()); sendEvent("checkout_start",{});},[]);
+  useEffect(()=>{sendEvent("checkout_start",{});},[]);
   const lines=useMemo(()=>cart.map((line)=>{for(const product of products){const variant=product.variants.find((v)=>v.id===line.variantId);if(variant)return{...line,product,variant};}return null;}).filter(Boolean) as Array<ClientCartLine&{product:Product;variant:Product["variants"][number]}>,[cart,products]);
   const subtotal=lines.reduce((s,l)=>s+l.variant.pricePaise*l.quantity,0);
   const onTurnstile=useCallback((value:string)=>setToken(value),[]);
@@ -36,7 +36,7 @@ export function CheckoutForm({ products, turnstileSiteKey }: { products: Product
       if(data.mode==="demo"){clearCart(); router.push(`/order/${encodeURIComponent(data.publicId)}?token=${encodeURIComponent(data.guestToken)}&demo=1`); return;}
       if(!window.Razorpay) throw new Error("Payment checkout did not load. Please refresh and retry.");
       sendEvent("payment_started",{orderId:data.publicId,amountPaise:data.amountPaise});
-      const rz=new window.Razorpay({key:data.keyId,amount:data.amountPaise,currency:"INR",name:"Velora",description:"Fragrance order",order_id:data.razorpayOrderId,prefill:{name:address.name,email:address.email,contact:address.phone},theme:{color:"#12100e"},handler:async(result:any)=>{
+      const rz=new window.Razorpay({key:data.keyId,amount:data.amountPaise,currency:"INR",name:"Velora",description:"Fragrance order",order_id:data.razorpayOrderId,prefill:{name:address.name,email:address.email,contact:address.phone},theme:{color:"#12100e"},handler:async(result:{razorpay_payment_id:string;razorpay_order_id:string;razorpay_signature:string})=>{
         const verify=await fetch("/api/payments/verify",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({orderId:data.orderId,...result})});
         if(!verify.ok){const p=await verify.json();setError(p.error||"Payment verification failed. Contact support before retrying.");return;}
         clearCart(); sendEvent("purchase",{orderId:data.publicId,amountPaise:data.amountPaise}); router.push(`/order/${encodeURIComponent(data.publicId)}?token=${encodeURIComponent(data.guestToken)}`);
