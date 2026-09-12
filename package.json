@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:cf": "opennextjs-cloudflare build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -39,10 +40,10 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "tailwindcss": "4.3.3",
-    "typescript": "6.0.0",
+    "typescript": "6.0.3",
     "vitest": "5.0.0",
     "wrangler": "4.129.1",
-    "eslint": "10.9.1",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.3.3"
   }
 }
