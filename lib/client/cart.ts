@@ -30,3 +30,20 @@ export function addToCart(variantId: string, quantity = 1) {
 export function removeFromCart(variantId: string) { writeCart(readCart().filter((line) => line.variantId !== variantId)); }
 export function clearCart() { writeCart([]); }
 export const CART_EVENT = EVENT;
+
+const EMPTY_CART: ClientCartLine[] = [];
+let snapshot: ClientCartLine[] | null = null;
+
+export function subscribeCart(onChange: () => void) {
+  const update = () => { snapshot = null; onChange(); };
+  window.addEventListener(EVENT, update);
+  window.addEventListener("storage", update);
+  return () => { window.removeEventListener(EVENT, update); window.removeEventListener("storage", update); };
+}
+
+export function getCartSnapshot(): ClientCartLine[] {
+  if (snapshot === null) snapshot = readCart();
+  return snapshot;
+}
+
+export function getServerCartSnapshot(): ClientCartLine[] { return EMPTY_CART; }

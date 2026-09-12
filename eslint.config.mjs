@@ -1,10 +1,12 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 
-export default [
+const config = [
   ...nextVitals,
   ...nextTs,
   {
     ignores: [".next/**", ".open-next/**", "node_modules/**", "playwright-report/**", "test-results/**"]
   }
 ];
+
+export default config;

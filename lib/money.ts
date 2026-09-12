@@ -4,5 +4,5 @@ export function formatINR(paise: number): string {
 
 export function pricePerMl(pricePaise: number, sizeMl: number): string {
   if (!sizeMl) return "";
-  return `${formatINR(Math.round(pricePaise / sizeMl))}/ml`;
+  return `${formatINR(Math.round(pricePaise / (sizeMl * 100)) * 100)}/ml`;
 }
