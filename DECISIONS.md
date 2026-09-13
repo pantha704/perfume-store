@@ -81,3 +81,11 @@
 **Chosen:** returns/privacy/terms pages say merchant/legal approval is required.
 
 **Why:** polished fiction is still fiction. A production codebase must not silently invent return rights, tax promises, authenticity claims or support contacts.
+
+## Payment provider abstraction, not a Razorpay-coupled checkout
+
+**Chosen:** checkout selects a payment adapter from a registry (`mock` is the default; the existing `razorpay` implementation is kept intact as one adapter) behind a `PaymentProvider` contract (`createCheckout / verifyCheckout / parseWebhook`), mirroring the fulfillment seam. `PAYMENTS_LIVE_ENABLED=false` fails closed; the `mock` adapter exercises the full order lifecycle with synthetic data and never contacts an external service.
+
+**Why:** the client's payment gateway is not chosen yet, and production payment credentials must belong to the client's merchant account — never a personal one (settlement, refunds, disputes, KYC and accounting all follow the merchant profile). When the client picks Razorpay, Stripe, Cashfree or PayU, checkout picks up a new adapter without a rewrite.
+
+**Cost:** one extra indirection in three route handlers; covered by architecture tests.
