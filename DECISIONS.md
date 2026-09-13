@@ -89,3 +89,7 @@
 **Why:** the client's payment gateway is not chosen yet, and production payment credentials must belong to the client's merchant account — never a personal one (settlement, refunds, disputes, KYC and accounting all follow the merchant profile). When the client picks Razorpay, Stripe, Cashfree or PayU, checkout picks up a new adapter without a rewrite.
 
 **Cost:** one extra indirection in three route handlers; covered by architecture tests.
+
+**Hardening (2026-09-13, per review):** mock payments are opt-in (`MOCK_PAYMENTS_ENABLED=false` by default) and forcibly disabled whenever `PAYMENTS_LIVE_ENABLED` or `FULFILLMENT_LIVE_ENABLED` is true — a mock "paid" order can never coexist with live money or a real shipment. Orders persist `payment_provider` (migration 0003) and verification/webhooks always run through the adapter that created the payment, even if the deployment's configured provider changes later.
+
+**Before activating any real gateway:** fetch the payment server-side after signature verification (status `captured`, Razorpay `order_id` match, amount equals the server total, currency INR) or make the verified webhook the authoritative success path; move the client SDK behind a per-provider `PaymentCheckout` seam so only the selected provider's SDK loads; add a provider-neutral refund operation to the `PaymentProvider` contract for admin tooling.
