@@ -88,5 +88,8 @@ jobs:
             echo "$p -> $code"
             [ "$code" = "200" ]
           done
-          curl -s --max-time 30 "$BASE/sitemap.xml" | grep -q "relapse-perfume-store.glm-panther.workers.dev"
+          # Fetch to a file before grepping: piping curl into `grep -q` can give
+          # curl EPIPE (exit 23) under pipefail when grep exits at the first match.
+          curl -sf --max-time 30 --retry 3 --retry-delay 2 "$BASE/sitemap.xml" -o /tmp/sitemap.xml
+          grep -q "relapse-perfume-store.glm-panther.workers.dev" /tmp/sitemap.xml
           echo "Smoke OK: canonical staging URL healthy"
