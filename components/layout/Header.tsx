@@ -13,7 +13,7 @@ export function Header() {
   const onCinematicHome = pathname === "/";
   return <>
     <header className={`site-header ${onCinematicHome ? "site-header-night" : "site-header-paper"}`}>
-      <Link href="/" className="wordmark" aria-label="Velora home"><span>VELORA</span><small>fragrance house</small></Link>
+      <Link href="/" className="wordmark" aria-label="Relapse home"><span>RELAPSE</span><small>perfume</small></Link>
       <nav className="desktop-nav" aria-label="Primary">{nav.map(([label,href]) => <Link key={href} href={href}>{label}</Link>)}</nav>
       <div className="header-actions">
         <Link href="/account" className="header-text-link">Account</Link>

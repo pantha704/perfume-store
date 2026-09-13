@@ -1,4 +1,4 @@
-# VELORA — cinematic fragrance commerce
+# RELAPSE — cinematic fragrance commerce
 
 A production-oriented **Next.js App Router** storefront for a single fragrance house. The visual system is editorial and cinematic; the commerce core remains deliberately boring, auditable, and provider-neutral.
 

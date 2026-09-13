@@ -2,5 +2,5 @@ import type { Metadata } from "next";
 import { getProducts } from "@/lib/catalogue";
 import { ProductCard } from "@/components/product/ProductCard";
 import Link from "next/link";
-export const metadata:Metadata={title:"Shop fragrance",description:"Explore the Velora fragrance collection by family, format and atmosphere."};
+export const metadata:Metadata={title:"Shop fragrance",description:"Explore the Relapse fragrance collection by family, format and atmosphere."};
 export default async function ShopPage(){const products=(await getProducts()).filter(p=>!p.isDiscoverySet);const families=[...new Set(products.map(p=>p.family))];return <div className="shop-page section-shell"><header className="shop-header"><div><p className="kicker">The collection · {String(products.length).padStart(2,"0")}</p><h1>Choose the<br/><em>temperature.</em></h1></div><p>Not by gender. Not by occasion labels first. Start with the kind of air you want around you, then decide how much of it you want to carry.</p></header><nav className="family-filter" aria-label="Fragrance families"><Link href="/shop" className="active">All</Link>{families.map(f=><Link key={f} href={`/shop/${f.toLowerCase()}`}>{f}</Link>)}</nav><div className="shop-grid">{products.map((product,index)=><ProductCard key={product.id} product={product} index={index} feature={index%5===0}/>)}</div></div>}

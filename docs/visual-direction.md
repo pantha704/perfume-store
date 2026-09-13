@@ -2,7 +2,7 @@
 
 ## Thesis
 
-Velora should feel like an editorial fragrance campaign that happens to be fully buyable. The first world is `night`: cinematic, sparse, controlled. Commerce moves into warm `paper`, where information density rises and motion becomes quieter. The boundary between those worlds is designed rather than hidden.
+Relapse should feel like an editorial fragrance campaign that happens to be fully buyable. The first world is `night`: cinematic, sparse, controlled. Commerce moves into warm `paper`, where information density rises and motion becomes quieter. The boundary between those worlds is designed rather than hidden.
 
 ## Tokens
 

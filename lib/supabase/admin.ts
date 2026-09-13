@@ -9,7 +9,7 @@ export function getAdminSupabase(): SupabaseClient | null {
   if (!url || !serviceKey) return (client = null);
   client = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
-    global: { headers: { "X-Client-Info": "velora-store-server" } },
+    global: { headers: { "X-Client-Info": "relapse-store-server" } },
   });
   return client;
 }

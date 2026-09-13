@@ -1,7 +1,0 @@
-<svg width="800" height="1000" viewBox="0 0 800 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="box" x1="180" y1="170" x2="620" y2="820" gradientUnits="userSpaceOnUse"><stop stop-color="#EEE7DD"/><stop offset="1" stop-color="#B6AA9C"/></linearGradient><filter id="s"><feDropShadow dx="0" dy="28" stdDeviation="25" flood-opacity=".18"/></filter></defs>
-<rect x="145" y="185" width="510" height="630" rx="18" fill="url(#box)" filter="url(#s)"/><rect x="178" y="218" width="444" height="564" rx="10" fill="#201C18"/>
-<g opacity=".96"> <rect x="220" y="340" width="58" height="260" rx="10" fill="#6A4934"/><rect x="297" y="340" width="58" height="260" rx="10" fill="#8B555A"/><rect x="374" y="340" width="58" height="260" rx="10" fill="#80694D"/><rect x="451" y="340" width="58" height="260" rx="10" fill="#513625"/><rect x="528" y="340" width="58" height="260" rx="10" fill="#3F665D"/></g>
-<g fill="#ECE4D7"><rect x="229" y="315" width="40" height="42" rx="3"/><rect x="306" y="315" width="40" height="42" rx="3"/><rect x="383" y="315" width="40" height="42" rx="3"/><rect x="460" y="315" width="40" height="42" rx="3"/><rect x="537" y="315" width="40" height="42" rx="3"/></g>
-<text x="400" y="266" text-anchor="middle" fill="#F2E9DC" font-size="30" font-family="Georgia,serif" letter-spacing="8">VELORA</text><text x="400" y="680" text-anchor="middle" fill="#BBAE9E" font-size="12" font-family="Arial,sans-serif" letter-spacing="4">DISCOVERY SET · FIVE WEARS</text>
-</svg>

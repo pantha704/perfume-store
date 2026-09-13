@@ -41,7 +41,7 @@ export function CheckoutForm({ products, turnstileSiteKey }: { products: Product
       }
       if(!window.Razorpay) throw new Error("Payment checkout did not load. Please refresh and retry.");
       sendEvent("payment_started",{orderId:data.publicId,amountPaise:data.amountPaise});
-      const rz=new window.Razorpay({key:data.keyId,amount:data.amountPaise,currency:"INR",name:"Velora",description:"Fragrance order",order_id:data.providerOrderId,prefill:{name:address.name,email:address.email,contact:address.phone},theme:{color:"#12100e"},handler:async(result:{razorpay_payment_id:string;razorpay_order_id:string;razorpay_signature:string})=>{
+      const rz=new window.Razorpay({key:data.keyId,amount:data.amountPaise,currency:"INR",name:"Relapse Perfumes",description:"Fragrance order",order_id:data.providerOrderId,prefill:{name:address.name,email:address.email,contact:address.phone},theme:{color:"#12100e"},handler:async(result:{razorpay_payment_id:string;razorpay_order_id:string;razorpay_signature:string})=>{
         const verify=await fetch("/api/payments/verify",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({orderId:data.orderId,providerOrderId:result.razorpay_order_id,paymentId:result.razorpay_payment_id,signature:result.razorpay_signature})});
         if(!verify.ok){const p=await verify.json();setError(p.error||"Payment verification failed. Contact support before retrying.");return;}
         clearCart(); sendEvent("purchase",{orderId:data.publicId,amountPaise:data.amountPaise}); router.push(`/order/${encodeURIComponent(data.publicId)}?token=${encodeURIComponent(data.guestToken)}`);
