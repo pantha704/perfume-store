@@ -1,5 +1,7 @@
 -- Safe demo/staging seed. Replace all merchant data and provider mappings before launch.
 -- Demo mode does not require this file; it uses data/demo-products.ts.
+-- LEGACY: predates the RELAPSE catalogue integration (old demo product names/slugs/prices).
+-- Never applied to the production database. Rewrite with client-confirmed data before use.
 
 insert into public.products
 (id,slug,name,eyebrow,short_description,description,family,concentration,image_url,image_alt,accent,notes,metadata,featured,sort_order)

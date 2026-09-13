@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 function anonId() {
-  const key = "velora-anon";
+  const key = "relapse-anon";
   let id = localStorage.getItem(key);
   if (!id) { id = crypto.randomUUID(); localStorage.setItem(key, id); }
   return id;

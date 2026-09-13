@@ -1,8 +1,8 @@
 "use client";
 
 export interface ClientCartLine { variantId: string; quantity: number }
-const KEY = "velora-cart-v2";
-const EVENT = "velora:cart";
+const KEY = "relapse-cart-v2";
+const EVENT = "relapse:cart";
 
 export function readCart(): ClientCartLine[] {
   if (typeof window === "undefined") return [];

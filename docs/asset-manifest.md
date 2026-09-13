@@ -11,7 +11,7 @@
 Hero frame naming is configured rather than hard-coded. Example:
 
 ```env
-NEXT_PUBLIC_HERO_FRAME_BASE=/cinematic/nocturne/{width}/frame-{index}.webp
+NEXT_PUBLIC_HERO_FRAME_BASE=/cinematic/invictus/{width}/frame-{index}.webp
 ```
 
 Prepare 1920px and 960px sets. Use four-digit one-based frame indexes (`0001` …). Keep a poster/LCP image independent from the full sequence when final assets arrive.
