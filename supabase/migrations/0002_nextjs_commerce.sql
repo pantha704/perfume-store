@@ -47,7 +47,7 @@ exception when duplicate_object then null; end $$;
 
 create or replace function public.set_store_credit_updated_at() returns trigger language plpgsql as $$
 begin new.updated_at = now(); return new; end $$;
-drop triggger if exists store_credit_updated on public.store_credits;
+drop trigger if exists store_credit_updated on public.store_credits;
 create trigger store_credit_updated before update on public.store_credits
 for each row execute function public.set_store_credit_updated_at();
 
