@@ -1,5 +1,5 @@
 -- ============================================================================
--- ARCHIVAL ONLY — NON-EXECUTABLE REFERENCE. DO NOT RUN.
+-- ARCHIVAL ONLY — NOT AUTOMATICALLY EXECUTED — DO NOT RUN.
 --
 -- This is the pre-RELAPSE demo seed kept for historical reference: old
 -- fictional catalogue (Nocturne-era names and slugs, VEL-* SKUs, invented

@@ -8,5 +8,5 @@
 -- Demo mode does not need seeding — the storefront reads data/demo-products.ts
 -- when NEXT_PUBLIC_DEMO_MODE=true.
 --
--- The pre-RELAPSE demo seed is archived (NON-EXECUTABLE) at
+-- The pre-RELAPSE demo seed is archived (NOT AUTOMATICALLY EXECUTED) at
 -- docs/legacy/seed-pre-relapse.sql and must never be run against any project.
