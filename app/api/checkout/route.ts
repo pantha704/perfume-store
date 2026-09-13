@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     if (pending.totalPaise === 0) return json({ error: "Zero-value orders require manual approval." }, 409);
     const provider = getPaymentProvider();
     const payment = await provider.createCheckout({ orderId: pending.id, publicId: pending.publicId, amountPaise: pending.totalPaise, notes: { internalOrderId: pending.id, publicId: pending.publicId } });
-    await attachPaymentOrder(pending.id, payment.providerOrderId);
+    await attachPaymentOrder(pending.id, payment.providerOrderId, provider.key);
     return json({ mode: payment.mode, provider: provider.key, orderId: pending.id, publicId: pending.publicId, guestToken: pending.guestToken, amountPaise: pending.totalPaise, creditAppliedPaise: pending.creditAppliedPaise, shipping: quote, keyId: payment.publicKey, providerOrderId: payment.providerOrderId });
   } catch (error) {
     console.error("checkout", error);

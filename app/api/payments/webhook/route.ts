@@ -18,8 +18,9 @@ export async function POST(request: Request) {
 
   const razorpayOrderId = event.providerOrderId;
   if (!razorpayOrderId) return json({ ok: true });
-  const { data: order } = await admin.from("orders").select("id").eq("payment_order_id", razorpayOrderId).maybeSingle();
+  const { data: order } = await admin.from("orders").select("id,payment_provider").eq("payment_order_id", razorpayOrderId).maybeSingle();
   if (!order) return json({ ok: true });
+  if (order.payment_provider && order.payment_provider !== "razorpay") return json({ ok: true });
   if (event.succeeded) {
     await markOrderPaid(order.id, String(event.paymentId || "webhook"));
     try { await submitPaidOrder(order.id); } catch (error) { console.error("webhook fulfillment", error); }

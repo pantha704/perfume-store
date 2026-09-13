@@ -90,9 +90,9 @@ export async function createPendingOrder(input: {
   return { id: order.id, publicId, guestToken, totalPaise, creditAppliedPaise };
 }
 
-export async function attachPaymentOrder(orderId: string, paymentOrderId: string) {
+export async function attachPaymentOrder(orderId: string, paymentOrderId: string, paymentProvider?: string) {
   const admin = getAdminSupabase(); if (!admin) return;
-  const { error } = await admin.from("orders").update({ payment_order_id: paymentOrderId }).eq("id", orderId);
+  const { error } = await admin.from("orders").update({ payment_order_id: paymentOrderId, ...(paymentProvider ? { payment_provider: paymentProvider } : {}) }).eq("id", orderId);
   if (error) throw new Error(error.message);
 }
 

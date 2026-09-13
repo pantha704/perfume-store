@@ -16,10 +16,10 @@ export async function POST(request: Request) {
     const body = await safeJson<VerifyBody>(request);
     if (!body?.orderId || !body.providerOrderId || !body.paymentId || !body.signature) return json({ error: "Invalid payment verification payload." }, 400);
     if (isDemoMode()) return json({ ok: true, demo: true });
-    const provider = getPaymentProvider();
     const admin = getAdminSupabase(); if (!admin) return json({ error: "Database unavailable." }, 503);
-    const { data: order } = await admin.from("orders").select("id,payment_order_id,payment_status").eq("id", body.orderId).maybeSingle();
+    const { data: order } = await admin.from("orders").select("id,payment_order_id,payment_status,payment_provider").eq("id", body.orderId).maybeSingle();
     if (!order || order.payment_order_id !== body.providerOrderId) return json({ error: "Payment order mismatch." }, 400);
+    const provider = getPaymentProvider(order.payment_provider);
     if (!provider.verifyCheckout({ providerOrderId: body.providerOrderId, paymentId: body.paymentId, signature: body.signature })) {
       await markOrderPaymentFailed(body.orderId);
       return json({ error: "Payment signature verification failed." }, 400);

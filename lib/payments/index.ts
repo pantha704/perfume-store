@@ -13,7 +13,7 @@ export function configuredPaymentProviderKey(): PaymentProviderKey {
 export function getPaymentProvider(key?: string | null): PaymentProvider {
   const selected = (key || configuredPaymentProviderKey()) as PaymentProviderKey;
   const provider = providers[selected] || mockPaymentProvider;
-  if (provider.key !== "mock" && !provider.isEnabled()) throw new Error(`${provider.key} is selected but not enabled/configured.`);
+  if (!provider.isEnabled()) throw new Error(`${provider.key} is selected but not enabled/configured.`);
   return provider;
 }
 
