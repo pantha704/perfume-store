@@ -1,4 +1,4 @@
-import type { CheckoutPaymentRequest, CheckoutPaymentResult, CheckoutVerificationInput, ParsedWebhook, PaymentProvider } from "@/lib/payments/types";
+import type { CheckoutPaymentResult, CheckoutVerificationInput, ParsedWebhook, PaymentProvider } from "@/lib/payments/types";
 
 /**
  * Synthetic provider used until the client's merchant gateway is chosen.
@@ -9,7 +9,7 @@ export const mockPaymentProvider: PaymentProvider = {
   key: "mock",
   isLive: () => false,
   isEnabled: () => true,
-  async createCheckout(_request: CheckoutPaymentRequest): Promise<CheckoutPaymentResult> {
+  async createCheckout(): Promise<CheckoutPaymentResult> {
     const id = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function" ? crypto.randomUUID() : Math.random().toString(36).slice(2);
     return { providerOrderId: `mock_order_${id}`, publicKey: null, mode: "mock" };
   },
