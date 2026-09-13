@@ -12,7 +12,7 @@ export function ProductCard({ product, index = 0, feature = false }: { product: 
       <div className="product-index">{String(index + 1).padStart(2,"0")}</div>
       <div className="product-halo" aria-hidden="true" />
       <Image src={product.image} alt={product.imageAlt} width={640} height={820} sizes={feature ? "(max-width: 800px) 90vw, 48vw" : "(max-width: 800px) 90vw, 32vw"} />
-      <span className="art-caption">placeholder bottle art</span>
+      <span className="art-caption">supplied house artwork</span>
     </Link>
     <div className="product-card-copy">
       <div><p className="kicker">{product.eyebrow} · {product.family}</p><h3><Link href={`/product/${product.slug}`}>{product.name}</Link></h3></div>

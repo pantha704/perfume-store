@@ -71,9 +71,9 @@ function drawBottle(canvas: HTMLCanvasElement, progress: number, frame?: HTMLIma
   ctx.fillStyle = "rgba(236,228,213,.94)"; ctx.fillRect(cx-labelW/2,labelY,labelW,labelH);
   ctx.fillStyle = "#17130f"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   ctx.font = `${Math.max(10, labelW*.075)}px Georgia, serif`; ctx.letterSpacing = "0.14em";
-  ctx.fillText("VELORA",cx,labelY+labelH*.37);
+  ctx.fillText("RELAPSE",cx,labelY+labelH*.37);
   ctx.font = `${Math.max(8, labelW*.046)}px Arial, sans-serif`; ctx.fillStyle = "#5d554b";
-  ctx.fillText("NOCTURNE 01",cx,labelY+labelH*.65);
+  ctx.fillText("INVICTUS",cx,labelY+labelH*.65);
   ctx.restore();
 
   // floor reflection
@@ -132,19 +132,19 @@ export function CinematicHero() {
     return () => { context.revert(); window.removeEventListener("resize", onResize); };
   }, []);
 
-  return <section ref={root} className="cinematic-hero" aria-label="Velora fragrance introduction">
+  return <section ref={root} className="cinematic-hero" aria-label="Relapse fragrance introduction">
     <div className="cinematic-sticky">
       <div className="hero-grain" aria-hidden="true" />
       <div className="hero-orbit" aria-hidden="true"><span>01</span><span>EAU DE PARFUM</span><span>INDIA</span></div>
-      <canvas ref={canvas} className="hero-canvas" aria-label="Animated placeholder bottle artwork for Velora Nocturne 01" />
+      <canvas ref={canvas} className="hero-canvas" aria-label="Animated placeholder bottle artwork for Relapse Invictus" />
       <div data-hero-intro className="hero-intro">
         <p className="kicker light">A fragrance house built in layers</p>
         <h1><span>Leave</span><span>a trace.</span></h1>
-        <p className="hero-deck">Cold iris. Smoked cedar. Amber that waits for skin.</p>
+        <p className="hero-deck">Five scents. Embrace the everyday.</p>
       </div>
       <div data-beat="1" className="hero-beat hero-beat-one"><span>01 / OPENING</span><h2>Bright enough<br/>to disappear.</h2><p>Black pepper and bergamot cut through the first minute before the composition slows down.</p></div>
       <div data-beat="2" className="hero-beat hero-beat-two"><span>02 / DRYDOWN</span><h2>Then the room<br/>gets quieter.</h2><p>Suede, cedar and amber sit close. A scent that changes distance instead of volume.</p></div>
-      <div data-hero-final className="hero-final"><p className="kicker light">Nocturne 01 · the first edit</p><h2>Wear the<br/><em>afterimage.</em></h2><div className="hero-final-actions"><Link href="/product/nocturne-01" className="button light-button">Discover Nocturne <ArrowUpRight width={17}/></Link><Link href="/samples" className="text-link-light">Start with 2 ml</Link></div></div>
+      <div data-hero-final className="hero-final"><p className="kicker light">Invictus · the first edit</p><h2>Wear the<br/><em>afterimage.</em></h2><div className="hero-final-actions"><Link href="/product/invictus" className="button light-button">Discover Invictus <ArrowUpRight width={17}/></Link><Link href="/samples" className="text-link-light">Start with 2 ml</Link></div></div>
       <div className="hero-scroll-marker"><span>Scroll to unfold</span><i/></div>
     </div>
   </section>;

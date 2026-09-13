@@ -10,10 +10,10 @@ const display = Cormorant_Garamond({ subsets:["latin"], variable:"--font-display
 const sans = Inter({ subsets:["latin"], variable:"--font-sans", display:"swap" });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://velora.example"),
-  title: { default:"Velora — Fragrance as atmosphere", template:"%s — Velora" },
-  description:"Small-batch fragrance built in layers. Samples, travel sizes and full bottles, with a sample-first way to discover what works on skin.",
-  openGraph:{title:"Velora",description:"Leave a trace.",type:"website",images:["/og.svg"]},
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://relapse.example"),
+  title: { default:"Relapse Perfumes — Fragrance as atmosphere", template:"%s — Relapse" },
+  description:"Relapse Perfumes — embrace the everyday. Five scents built in layers, with samples, travel sizes and full bottles.",
+  openGraph:{title:"Relapse Perfumes",description:"Embrace the everyday.",type:"website",images:["/og.svg"]},
 };
 export const viewport: Viewport = { width:"device-width", initialScale:1, themeColor:"#0d0c0b", colorScheme:"light" };
 

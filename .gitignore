@@ -10,4 +10,7 @@ playwright-report/
 test-results/
 coverage/
 *.tsbuildinfo
+# Raw client media exports — client-private material must never enter this repo
+docs/client-assets/
+*.zip
 .DS_Store

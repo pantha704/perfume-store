@@ -13,7 +13,7 @@ export function VariantSelector({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const variant = useMemo(() => product.variants.find((v) => v.id === variantId) || initial, [product, variantId, initial]);
   if (!variant) return null;
-  const perMl = variant.sizeMl ? Math.round(variant.pricePaise / variant.sizeMl) : 0;
+  const perMl = variant.sizeMl ? Math.round(variant.pricePaise / variant.sizeMl / 100) * 100 : 0;
   const sample = product.variants.find((v) => v.kind === "sample" && v.available);
 
   function choose(id: string) {

@@ -2,8 +2,8 @@
 
 | Asset | Current | Production requirement |
 |---|---|---|
-| Core bottle images | `public/products/*.svg` labelled placeholder | approved front/3-quarter bottle renders, consistent light/backdrop, AVIF/WebP |
-| Discovery set | `public/products/discovery.svg` placeholder | real box/vials image + scale reference |
+| Core bottle images | Client-supplied posters (interim, WhatsApp-compressed) at `public/products/relapse/*.webp` | approved studio front/3-quarter bottle renders, consistent light/backdrop, AVIF/WebP, full resolution |
+| Discovery set | real client photograph (`discovery-set.webp`) | full-resolution original when available |
 | Home hero | procedural canvas fallback | 6s centered bottle turntable frame sequence |
 | PDP scale | reused placeholder bottle | in-hand or known-object photograph |
 | OG | placeholder brand artwork | generated per scent using approved bottle + accent token |
