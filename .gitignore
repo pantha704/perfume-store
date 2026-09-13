@@ -13,4 +13,11 @@ coverage/
 # Raw client media exports — client-private material must never enter this repo
 docs/client-assets/
 *.zip
+
+# GitNexus local code knowledge graph + generated agent context (regenerate: npx gitnexus analyze)
+.gitnexus/
+.claude/
+CLAUDE.md
+AGENTS.md
+
 .DS_Store
