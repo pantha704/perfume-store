@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { runtimeEnv } from "@/lib/runtime-env";
+import { envFlag, runtimeEnv } from "@/lib/runtime-env";
+import type { CheckoutPaymentRequest, CheckoutPaymentResult, CheckoutVerificationInput, ParsedWebhook, PaymentProvider } from "@/lib/payments/types";
 
 const razorpayBase = "https://api.razorpay.com/v1";
 
@@ -62,3 +63,27 @@ export function verifyWebhookSignature(rawBody: string, signature: string): bool
 }
 
 export function publicRazorpayKey(): string { return runtimeEnv("NEXT_PUBLIC_RAZORPAY_KEY_ID", runtimeEnv("RAZORPAY_KEY_ID")); }
+
+interface RazorpayWebhookPayload { event?: string; created_at?: number; payload?: { payment?: { entity?: { id?: string; order_id?: string } } } }
+
+export const razorpayPaymentProvider: PaymentProvider = {
+  key: "razorpay",
+  isLive: () => true,
+  isEnabled: () => envFlag("PAYMENTS_LIVE_ENABLED", false) && !!runtimeEnv("RAZORPAY_KEY_ID") && !!runtimeEnv("RAZORPAY_KEY_SECRET"),
+  async createCheckout(request: CheckoutPaymentRequest): Promise<CheckoutPaymentResult> {
+    const order = await createRazorpayOrder({ amountPaise: request.amountPaise, receipt: request.publicId, notes: request.notes });
+    return { providerOrderId: order.id, publicKey: publicRazorpayKey(), mode: "live" };
+  },
+  verifyCheckout(input: CheckoutVerificationInput): boolean {
+    return verifyCheckoutSignature({ razorpayOrderId: input.providerOrderId, razorpayPaymentId: input.paymentId, signature: input.signature });
+  },
+  parseWebhook(rawBody: string, signature: string, headers?: Headers): ParsedWebhook | null {
+    if (!verifyWebhookSignature(rawBody, signature)) return null;
+    let event: RazorpayWebhookPayload;
+    try { event = JSON.parse(rawBody) as RazorpayWebhookPayload; } catch { return null; }
+    const payment = event?.payload?.payment?.entity;
+    const eventType = event.event || "unknown";
+    const eventId = headers?.get("x-razorpay-event-id") || String(payment?.id || `${eventType}:${event.created_at || "unknown"}`);
+    return { eventId, eventType, paymentId: payment?.id, providerOrderId: payment?.order_id, succeeded: ["payment.captured", "order.paid"].includes(eventType), failed: eventType === "payment.failed", raw: event };
+  },
+};

@@ -2,7 +2,7 @@ import { json, safeJson } from "@/lib/http";
 import { assertAllowedMutationOrigin } from "@/lib/security";
 import { priceCart, quoteShipping } from "@/lib/checkout";
 import { createPendingOrder, attachPaymentOrder } from "@/lib/order-service";
-import { createRazorpayOrder, publicRazorpayKey } from "@/lib/payments/razorpay";
+import { getPaymentProvider } from "@/lib/payments";
 import { authenticatedUser } from "@/lib/auth-server";
 import { isDemoMode } from "@/lib/runtime-env";
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -32,9 +32,10 @@ export async function POST(request: Request) {
       return json({ mode: "demo", orderId: pending.id, publicId: pending.publicId, guestToken: pending.guestToken, amountPaise: pending.totalPaise, creditAppliedPaise: pending.creditAppliedPaise, shipping: quote, keyId: "demo" });
     }
     if (pending.totalPaise === 0) return json({ error: "Zero-value orders require manual approval." }, 409);
-    const razorpay = await createRazorpayOrder({ amountPaise: pending.totalPaise, receipt: pending.publicId, notes: { internalOrderId: pending.id, publicId: pending.publicId } });
-    await attachPaymentOrder(pending.id, razorpay.id);
-    return json({ mode: "live", orderId: pending.id, publicId: pending.publicId, guestToken: pending.guestToken, amountPaise: pending.totalPaise, creditAppliedPaise: pending.creditAppliedPaise, shipping: quote, keyId: publicRazorpayKey(), razorpayOrderId: razorpay.id });
+    const provider = getPaymentProvider();
+    const payment = await provider.createCheckout({ orderId: pending.id, publicId: pending.publicId, amountPaise: pending.totalPaise, notes: { internalOrderId: pending.id, publicId: pending.publicId } });
+    await attachPaymentOrder(pending.id, payment.providerOrderId);
+    return json({ mode: payment.mode, provider: provider.key, orderId: pending.id, publicId: pending.publicId, guestToken: pending.guestToken, amountPaise: pending.totalPaise, creditAppliedPaise: pending.creditAppliedPaise, shipping: quote, keyId: payment.publicKey, providerOrderId: payment.providerOrderId });
   } catch (error) {
     console.error("checkout", error);
     return json({ error: error instanceof Error ? error.message : "Checkout failed." }, 400);
