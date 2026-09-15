@@ -10,7 +10,7 @@
 - Final statement enters before the stage releases.
 - Canvas progress reverses naturally when scroll reverses.
 
-The real-asset contract uses `NEXT_PUBLIC_HERO_FRAME_BASE`, with `{index}` and optional `{width}` placeholders. Desktop budget is 150 frames; mobile is 36. First 20 frames preload, remainder loads during idle. If no frame base exists, a procedural bottle renderer keeps the composition functional without pretending to be final product photography.
+The real-asset contract uses `NEXT_PUBLIC_HERO_FRAME_BASE`, with `{index}` and `{width}` placeholders. Desktop budget is 150 frames; mobile is 60. First 20 frames preload, remainder loads during idle. If no frame base exists, a procedural bottle renderer keeps the composition functional without pretending to be final product photography. When a frame base IS set, the renderer never falls back to procedural art mid-flight — it shows the last loaded frame (or an empty stage until the preload lands) so the swap can never read as a flicker.
 
 ## Reduced motion
 

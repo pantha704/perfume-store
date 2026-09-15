@@ -7,7 +7,7 @@ import { ArrowUpRight } from "@/components/ui/Icons";
 
 gsap.registerPlugin(ScrollTrigger);
 
-function drawBottle(canvas: HTMLCanvasElement, progress: number, frame?: HTMLImageElement) {
+function drawBottle(canvas: HTMLCanvasElement, progress: number, frame?: HTMLImageElement, framesActive = false) {
   const rect = canvas.getBoundingClientRect();
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const width = Math.max(1, Math.floor(rect.width * dpr));
@@ -18,6 +18,16 @@ function drawBottle(canvas: HTMLCanvasElement, progress: number, frame?: HTMLIma
   ctx.clearRect(0,0,rect.width,rect.height);
 
   const w = rect.width, h = rect.height;
+  if (framesActive) {
+    // Rendered sequence is the visual source; never fall back to procedural art
+    // mid-flight (that flash would read as a glitch). Empty stage until ready.
+    if (frame?.complete && frame.naturalWidth) {
+      const scale = Math.min(w / frame.naturalWidth, h / frame.naturalHeight);
+      const dw = frame.naturalWidth * scale, dh = frame.naturalHeight * scale;
+      ctx.drawImage(frame, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    }
+    return;
+  }
   if (frame?.complete && frame.naturalWidth) {
     const scale = Math.min(w / frame.naturalWidth, h / frame.naturalHeight);
     const dw = frame.naturalWidth * scale, dh = frame.naturalHeight * scale;
@@ -93,11 +103,11 @@ export function CinematicHero() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const frameBase = process.env.NEXT_PUBLIC_HERO_FRAME_BASE || "";
     const mobile = window.matchMedia("(max-width: 680px)").matches;
-    const frameCount = mobile ? 36 : 150;
+    const frameCount = mobile ? 60 : 150;
     const frames: Array<HTMLImageElement | undefined> = new Array(frameCount);
     const frameUrl = (index: number) => frameBase
       .replace("{index}", String(index + 1).padStart(4, "0"))
-      .replace("{width}", mobile ? "960" : "1920");
+      .replace("{width}", mobile ? "960" : "1600");
     const loadFrame = (index: number) => {
       if (!frameBase || frames[index]) return;
       const image = new Image();
@@ -108,7 +118,9 @@ export function CinematicHero() {
     };
     const render = () => {
       const index = Math.min(frameCount - 1, Math.max(0, Math.round(progress.current * (frameCount - 1))));
-      drawBottle(c, progress.current, frames[index]);
+      let ready = index;
+      while (ready > 0 && !(frames[ready]?.complete && frames[ready]?.naturalWidth)) ready -= 1;
+      drawBottle(c, progress.current, frames[ready], Boolean(frameBase));
     };
     if (frameBase) {
       for (let index = 0; index < Math.min(20, frameCount); index += 1) loadFrame(index);
