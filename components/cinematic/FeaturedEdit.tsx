@@ -9,6 +9,10 @@ export function FeaturedEdit({ products }: { products: Product[] }) {
     <header className="editorial-heading"><p className="kicker">The current edit · 01—03</p><h2>Three ways to<br/><em>stay remembered.</em></h2><div><p>Fragrance chosen by atmosphere, not category. Start with what you want the room to feel like after you leave it.</p><Link href="/shop" className="inline-arrow">See the full collection <ArrowUpRight width={17}/></Link></div></header>
     <div className="editorial-products">
       {featured.map((product,index) => <ProductCard key={product.id} product={product} index={index} feature={index===0}/>) }
+      <div className="editorial-script" aria-hidden="true">
+        <p className="script-line">Embrace the everyday.</p>
+        <p className="script-caption">Relapse Perfumes · the house line</p>
+      </div>
     </div>
   </section>;
 }
