@@ -29,7 +29,7 @@ def main():
     ap.add_argument("--src", required=True)
     ap.add_argument("--dst", required=True)
     ap.add_argument("--width", type=int, default=1600)
-    ap.add_argument("--feather", type=float, default=0.10)
+    ap.add_argument("--feather", type=float, default=0.20)
     ap.add_argument("--quality", type=int, default=88)
     args = ap.parse_args()
 
@@ -37,20 +37,30 @@ def main():
     names = sorted(f for f in os.listdir(args.src) if f.endswith(".png"))
     if not names:
         sys.exit(f"no PNGs in {args.src}")
+    mask_cache = {}
     total = 0
-    for i, name in enumerate(names):
+    done = 0
+    for name in names:
+        dst = os.path.join(args.dst, name.replace(".png", ".webp"))
+        if os.path.exists(dst):
+            total += os.path.getsize(dst)
+            continue
         img = Image.open(os.path.join(args.src, name)).convert("RGBA")
         if args.width and img.width != args.width:
             img = img.resize((args.width, args.width), Image.LANCZOS)
+        key = (img.width, img.height, args.feather)
+        if key not in mask_cache:
+            mask_cache[key] = edge_mask(img.width, img.height, args.feather)
         arr = np.asarray(img).astype(np.float32)
-        m = edge_mask(img.width, img.height, args.feather)
+        m = mask_cache[key]
         arr[..., 3] *= m
+        arr[..., :3] *= (0.30 + 0.70 * m)[..., None]   # burn dark edges so the blend is seamless
         out = Image.fromarray(arr.clip(0, 255).astype(np.uint8), "RGBA")
-        dst = os.path.join(args.dst, name.replace(".png", ".webp"))
-        out.save(dst, "WEBP", quality=args.quality, method=6, alpha_quality=100)
+        out.save(dst, "WEBP", quality=args.quality, method=4, alpha_quality=90)
         total += os.path.getsize(dst)
-        if (i + 1) % 25 == 0 or i == len(names) - 1:
-            print(f"{i + 1}/{len(names)} frames, running total {total / 1e6:.1f} MB", flush=True)
+        done += 1
+        if done % 20 == 0:
+            print(f"{done} converted, running total {total / 1e6:.1f} MB", flush=True)
     print(f"DONE {len(names)} frames -> {args.dst} ({total / 1e6:.1f} MB)")
 
 
