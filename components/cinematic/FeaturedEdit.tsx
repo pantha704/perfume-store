@@ -10,7 +10,7 @@ export function FeaturedEdit({ products }: { products: Product[] }) {
     <div className="editorial-products">
       {featured.map((product,index) => <ProductCard key={product.id} product={product} index={index} feature={index===0}/>) }
       <div className="editorial-script" aria-hidden="true">
-        <p className="script-line">Embrace the everyday.</p>
+        <p className="script-line">Embrace the everyday.<br/>Leave a trace.</p>
         <p className="script-caption">Relapse Perfumes · the house line</p>
       </div>
     </div>
