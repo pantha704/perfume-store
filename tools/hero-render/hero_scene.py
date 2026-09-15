@@ -1,21 +1,15 @@
-# RELAPSE hero — cinematic house bottle (from the client's macro poster reference):
-# faceted slab of amber glass, tapered shoulder, ribbed silver crimp collar,
-# black pump stack, faceted crystal cap. Fully headless; Cycles/OptiX.
-#
-# Structural realism notes:
-#  - body/shoulder/neck are ONE lofted surface (superellipse rings), top open
-#  - solidify gives real glass wall thickness; the neck bore is real
-#  - liquid is a separate inner volume with volume absorption (deep amber)
-#  - pump stack sits inside the bore; crystal cap transmits it, like the ref
-import bpy, bmesh, math, os
+# RELAPSE hero — faceted square flacon (client-supplied design, repaired to
+# reference quality): cut-crystal diamond facet field, rich amber liquid with
+# volume absorption, chrome ribbed collar + sprayer, faceted crystal cap,
+# white RELAPSE serif wordmark. Headless; Cycles/OptiX.
+import bpy, bmesh, math, os, random
 from mathutils import Vector
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TEX = os.path.join(HERE, "textures")
 
-# key bottle coordinates (meters) — shared with render_frames.py
-CAP_REST_CENTER = 0.1340     # cap center z at rest
-CAP_LIFT        = 0.0500     # rise when opened
+CAP_REST_CENTER = 0.1170
+CAP_LIFT        = 0.0480
 
 # ---------- helpers ----------
 def clean():
@@ -98,7 +92,6 @@ def ring_points(a, b, n_exp, z, segs):
     return pts
 
 def loft(rings, close_bottom=True, close_top=False, segs=128):
-    """rings: list of (a, b, n_exp, z) from bottom to top."""
     bm = bmesh.new()
     rows = []
     for (a, b, n_exp, z) in rings:
@@ -114,7 +107,6 @@ def loft(rings, close_bottom=True, close_top=False, segs=128):
         bm.faces.new(tuple(rows[-1]))
     for f in bm.faces:
         f.smooth = True
-    # ensure normals point outward (radially from the z axis)
     for f in bm.faces:
         c = f.calc_center_median()
         radial = Vector((c.x, c.y, 0.0))
@@ -131,14 +123,42 @@ def set_absorption(mat, color, density):
     out = nt.nodes.get("Material Output")
     nt.links.new(vol.outputs["Volume"], out.inputs["Volume"])
 
+def facet_field(name, origin, u, v, nrm, cols, rows, tile_w, tile_h,
+                push=0.0003, lift=0.00012, material=None):
+    """Diamond-cut facet tiles on a flat face (flat-shaded pyramids)."""
+    bm = bmesh.new()
+    o = Vector(origin); U = Vector(u); V = Vector(v); N = Vector(nrm)
+    for i in range(cols):
+        for j in range(rows):
+            cu = (i + 0.5) * tile_w
+            cv = (j + 0.5) * tile_h
+            c = o + U * cu + V * cv
+            corners = [c + U * (tile_w / 2), c + V * (tile_h / 2),
+                       c - U * (tile_w / 2), c - V * (tile_h / 2)]
+            vs = [bm.verts.new(p + N * lift) for p in corners]
+            va = bm.verts.new(c + N * push)
+            for k in range(4):
+                bm.faces.new((vs[k], vs[(k + 1) % 4], va))
+    for f in bm.faces:
+        f.smooth = False
+        if f.normal.dot(N) < 0:
+            f.normal_flip()
+    obj = new_mesh_obj(name, bm)
+    if material:
+        obj.data.materials.append(material)
+    return obj
+
 # ---------- bottle dimensions ----------
-BODY_W, BODY_D = 0.025, 0.0125         # half-extents (50 x 25 mm slab)
-BODY_TOP = 0.078
-SH_TOP = 0.096
-NECK_HW, NECK_D = 0.009, 0.009
-NECK_TOP = 0.108
+BODY_W, BODY_D = 0.027, 0.013          # half extents: 54 x 26 mm slab
+BODY_TOP = 0.070
+SH_TOP = 0.084
+NECK_HW = 0.009
+NECK_TOP = 0.094
 WALL = 0.0022
-LIQ_TOP = 0.060
+LIQ_TOP = 0.056
+FACET_Z0 = 0.008                       # facet field from 8mm up
+FACET_ROWS, FACET_COLS = 7, 8
+TILE_W, TILE_H = 0.0052, 0.0054        # 41.6 x 37.8 mm field on front/back
 
 def build():
     sc = clean()
@@ -204,19 +224,19 @@ def build():
     set_in(b, "Specular IOR Level", 0.12)
     table.data.materials.append(wood)
 
-    # ---- glass body (lofted, open top so the bore is real) ----
+    # ---- glass body (lofted slab, open top ⇒ real bore) ----
     rings = []
-    for z in (0.0, 0.012, 0.034, 0.056, BODY_TOP):
-        rings.append((BODY_W, BODY_D, 12.0, z))
+    for z in (0.0, 0.012, 0.030, 0.050, BODY_TOP):
+        rings.append((BODY_W, BODY_D, 14.0, z))
     steps = 12
     for i in range(1, steps + 1):
         t = i / steps
-        e = t * t * (3 - 2 * t)                      # smooth shoulder curve
+        e = t * t * (3 - 2 * t)
         a = BODY_W + (NECK_HW - BODY_W) * e
-        bb = BODY_D + (NECK_D - BODY_D) * e
-        rings.append((a, bb, 12.0 - 7.0 * e, BODY_TOP + (SH_TOP - BODY_TOP) * t))
+        bb = BODY_D + (NECK_HW - BODY_D) * e
+        rings.append((a, bb, 14.0 - 8.0 * e, BODY_TOP + (SH_TOP - BODY_TOP) * t))
     for z in (NECK_TOP * 0.94, NECK_TOP):
-        rings.append((NECK_HW, NECK_D, 5.0, z))
+        rings.append((NECK_HW, NECK_HW, 6.0, z))
     flask = new_mesh_obj("Flask", loft(rings, close_bottom=True, close_top=False, segs=160))
     glass = mat_new("Glass", base=(0.985, 1.0, 0.995, 1), rough=0.004, ior=1.50,
                     transmission=1.0)
@@ -227,75 +247,84 @@ def build():
     sol.use_even_offset = True
     smooth(flask, 55)
 
-    # diamond-cut sparkle on the glass (very subtle, like the poster facets)
-    gnt = glass.node_tree
-    gb = principled(glass)
-    tc = gnt.nodes.new("ShaderNodeTexCoord")
-    w1 = gnt.nodes.new("ShaderNodeTexWave"); w1.location = (-800, -400)
-    w1.wave_type = "BANDS"; w1.bands_direction = "DIAGONAL"
-    w1.inputs["Scale"].default_value = 26.0
-    w1.inputs["Distortion"].default_value = 0.0
-    w2 = gnt.nodes.new("ShaderNodeTexWave"); w2.location = (-800, -650)
-    w2.wave_type = "BANDS"; w2.bands_direction = "DIAGONAL"
-    w2.inputs["Scale"].default_value = 26.0
-    w2.inputs["Distortion"].default_value = 0.0
-    wmap2 = gnt.nodes.new("ShaderNodeMapping"); wmap2.location = (-1000, -650)
-    wmap2.inputs["Rotation"].default_value = (0, 0, math.radians(90))
-    mixw = gnt.nodes.new("ShaderNodeMix"); mixw.location = (-450, -500)
-    mixw.data_type = "RGBA"; mixw.blend_type = "MULTIPLY"
-    mixw.inputs["Factor"].default_value = 1.0
-    bumpg = gnt.nodes.new("ShaderNodeBump"); bumpg.location = (-220, -500)
-    bumpg.inputs["Strength"].default_value = 0.045
-    gnt.links.new(tc.outputs["Object"], w1.inputs["Vector"])
-    gnt.links.new(tc.outputs["Object"], wmap2.inputs["Vector"])
-    gnt.links.new(wmap2.outputs["Vector"], w2.inputs["Vector"])
-    gnt.links.new(w1.outputs["Fac"], mixw.inputs[6])
-    gnt.links.new(w2.outputs["Fac"], mixw.inputs[7])
-    gnt.links.new(mixw.outputs[2], bumpg.inputs["Height"])
-    gnt.links.new(bumpg.outputs["Normal"], gb.inputs["Normal"])
+    # ---- cut-crystal facet fields (front, back, sides) ----
+    facets = []
+    fz0 = FACET_Z0
+    fw = FACET_COLS * TILE_W; fh = FACET_ROWS * TILE_H
+    facets.append(facet_field("FacetFront", (-fw/2, -BODY_D, fz0), (1,0,0), (0,0,1),
+                              (0,-1,0), FACET_COLS, FACET_ROWS, TILE_W, TILE_H, material=glass))
+    facets.append(facet_field("FacetBack", (fw/2, BODY_D, fz0), (-1,0,0), (0,0,1),
+                              (0,1,0), FACET_COLS, FACET_ROWS, TILE_W, TILE_H, material=glass))
+    side_h = FACET_ROWS * TILE_H
+    facets.append(facet_field("FacetLeft", (-BODY_W, -side_h/2, fz0), (0,1,0), (0,0,1),
+                              (-1,0,0), 3, FACET_ROWS, TILE_W, TILE_H, material=glass))
+    facets.append(facet_field("FacetRight", (BODY_W, side_h/2, fz0), (0,-1,0), (0,0,1),
+                              (1,0,0), 3, FACET_ROWS, TILE_W, TILE_H, material=glass))
 
-    # ---- amber liquid (inner volume, volume absorption) ----
+    # ---- amber liquid (inner volume + absorption) ----
     lrings = []
-    for z in (0.0, 0.014, 0.036, 0.052, LIQ_TOP):
-        lrings.append((BODY_W - WALL, BODY_D - WALL, 12.0, z))
+    for z in (0.0, 0.014, 0.034, 0.048, LIQ_TOP):
+        lrings.append((BODY_W - WALL, BODY_D - WALL, 14.0, z))
     liquid = new_mesh_obj("Liquid", loft(lrings, close_bottom=True, close_top=True))
-    liq = mat_new("Liquid", base=(0.92, 0.55, 0.16, 1), rough=0.002, ior=1.36,
+    liq = mat_new("Liquid", base=(0.90, 0.52, 0.14, 1), rough=0.002, ior=1.36,
                   transmission=1.0)
-    set_absorption(liq, (0.75, 0.45, 0.13), 55.0)
+    set_absorption(liq, (0.72, 0.42, 0.12), 60.0)
     liquid.data.materials.append(liq)
     smooth(liquid, 55)
 
-    # ---- silver crimp collar (ribbed) ----
+    # ---- suspended air bubbles (subtle, inside the liquid) ----
+    rnd = random.Random(7)
+    bubbles = []
+    for k in range(14):
+        r = rnd.uniform(0.0007, 0.0013)
+        x = rnd.uniform(-0.018, 0.018)
+        y = rnd.uniform(-0.007, 0.007)
+        z = rnd.uniform(0.030, 0.052)
+        bmb = bmesh.new()
+        bmesh.ops.create_uvsphere(bmb, u_segments=24, v_segments=16, radius=r)
+        bub = new_mesh_obj(f"Bubble{k}", bmb)
+        bub.location = (x, y, z)
+        bub.data.materials.append(glass)
+        smooth(bub, 60)
+        bubbles.append(bub)
+
+    # ---- chrome collar + sprayer ----
     chrome = mat_new("Chrome", base=(0.86, 0.87, 0.90, 1), metallic=1.0, rough=0.16)
     collar_parts = []
-    zc = 0.1085
-    radii = [0.0128, 0.0123, 0.0129, 0.0122, 0.0127, 0.0120]
+    zc = 0.0870
+    radii = [0.0126, 0.0120, 0.0127, 0.0119, 0.0124, 0.0117]
     for idx, r in enumerate(radii):
         c = new_mesh_obj(f"Collar{idx}", cylinder(r, 0.0021))
         c.location = (0, 0, zc + idx * 0.0021)
         c.data.materials.append(chrome)
         smooth(c, 30)
         collar_parts.append(c)
-    # collar base flange ring
-    base_ring = new_mesh_obj("CollarBase", cylinder(0.0150, 0.0028))
-    base_ring.location = (0, 0, 0.1072)
+    base_ring = new_mesh_obj("CollarBase", cylinder(0.0148, 0.0030))
+    base_ring.location = (0, 0, 0.0855)
     base_ring.data.materials.append(chrome)
     smooth(base_ring, 30)
     collar_parts.append(base_ring)
+    sprayer = new_mesh_obj("Sprayer", cylinder(0.0086, 0.0080))
+    sprayer.location = (0, 0, 0.0990)
+    sprayer.data.materials.append(chrome)
+    smooth(sprayer, 36)
+    collar_parts.append(sprayer)
 
-    # ---- black pump stack ----
     black = mat_new("Black", base=(0.018, 0.017, 0.016, 1), rough=0.32)
-    stem = new_mesh_obj("Stem", cylinder(0.0026, 0.024))
-    stem.location = (0, 0, 0.1160)
-    stem.data.materials.append(black)
-    smooth(stem, 30)
-    act = new_mesh_obj("Actuator", cube(0.0052, 0.0052, 0.0056))
-    act.location = (0, 0, 0.1270)
-    act.data.materials.append(black)
-    smooth(act, 24)
+    bnb = cube(0.0080, 0.0080, 0.0060)
+    bevel(bnb, 0.0012, 3)
+    nozzle = new_mesh_obj("NozzleButton", bnb)
+    nozzle.location = (0, 0, 0.1062)
+    nozzle.data.materials.append(black)
+    smooth(nozzle, 24)
+    tip = new_mesh_obj("NozzleTip", cylinder(0.0022, 0.0050))
+    tip.location = (0, -0.0062, 0.1060)
+    tip.rotation_euler = (math.radians(90), 0, 0)
+    tip.data.materials.append(black)
+    smooth(tip, 30)
 
     # ---- faceted crystal cap ----
-    bm = cube(0.026, 0.026, 0.020)
+    bm = cube(0.023, 0.023, 0.020)
     bevel(bm, 0.0030, 5)
     cap = new_mesh_obj("Cap", bm)
     cap.location = (0, 0, CAP_REST_CENTER)
@@ -304,11 +333,34 @@ def build():
     cap.data.materials.append(crystal)
     smooth(cap, 30)
 
+    # ---- white RELAPSE wordmark decal (front upper zone) ----
+    wm_w = 0.040
+    wimg = bpy.data.images.load(os.path.join(TEX, "relapse-wordmark-white.png"))
+    wimg.colorspace_settings.name = "sRGB"
+    wm_h = wm_w * (wimg.size[1] / wimg.size[0])
+    bpy.ops.mesh.primitive_plane_add(size=1.0)
+    wordmark = bpy.context.active_object
+    wordmark.name = "Wordmark"
+    wordmark.scale = (wm_w, wm_h, 1.0)
+    wordmark.rotation_euler = (math.radians(90), 0, 0)
+    wordmark.location = (0, -BODY_D - 0.0004, 0.0605)
+    wm_mat = mat_new("WordmarkMat", base=(1, 1, 1, 1), rough=0.38)
+    wb = principled(wm_mat)
+    wtex = wm_mat.node_tree.nodes.new("ShaderNodeTexImage")
+    wtex.image = wimg
+    wtex.extension = "EXTEND"
+    wm_mat.node_tree.links.new(wtex.outputs["Color"], wb.inputs["Base Color"])
+    wm_mat.node_tree.links.new(wtex.outputs["Alpha"], wb.inputs["Alpha"])
+    wordmark.data.materials.append(wm_mat)
+    for f in wordmark.data.polygons:
+        f.use_smooth = True
+
     # ---- rig ----
     rig = link(bpy.data.objects.new("Rig", None))
-    for o in [flask, liquid, stem, act] + collar_parts:
+    for o in [flask, liquid, nozzle, tip] + facets + bubbles + collar_parts:
         o.parent = rig
     cap.parent = rig
+    wordmark.parent = rig
 
     # ---- camera ----
     cam_data = bpy.data.cameras.new("Cam")
@@ -334,7 +386,7 @@ def build():
     wnt.links.new(henv.outputs["Color"], wmap.inputs["Vector"])
     wnt.links.new(wmap.outputs["Vector"], wbg.inputs["Color"])
 
-    # ---- lights (product-film setup, kept high to avoid table pools) ----
+    # ---- lights ----
     def area(name, sx, sy, loc, color, watts):
         li = bpy.data.lights.new(name, "AREA")
         li.shape = "RECTANGLE"; li.size = sx; li.size_y = sy

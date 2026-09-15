@@ -33,9 +33,9 @@ def pw(p, keys, ease=smooth):
 
 # ---------------- choreography (p = hero scroll progress 0..1) ----------------
 CAM_AZ  = [(0.00, -16), (0.30, -6), (0.50, -4), (0.62, -3), (1.00, -7)]
-CAM_D   = [(0.00, 0.400), (0.30, 0.385), (0.50, 0.190), (0.62, 0.182), (1.00, 0.390)]
-CAM_Z   = [(0.00, 0.072), (0.30, 0.076), (0.50, 0.130), (0.62, 0.134), (1.00, 0.080)]
-CAM_TZ  = [(0.00, 0.070), (0.30, 0.072), (0.50, 0.133), (0.62, 0.136), (1.00, 0.068)]
+CAM_D   = [(0.00, 0.385), (0.30, 0.372), (0.50, 0.180), (0.62, 0.172), (1.00, 0.385)]
+CAM_Z   = [(0.00, 0.068), (0.30, 0.072), (0.50, 0.114), (0.62, 0.117), (1.00, 0.074)]
+CAM_TZ  = [(0.00, 0.062), (0.30, 0.064), (0.50, 0.115), (0.62, 0.118), (1.00, 0.062)]
 FSTOP   = [(0.00, 4.2), (0.30, 3.4), (0.50, 2.5), (0.62, 2.4), (1.00, 3.6)]
 BOT_AZ  = [(0.00, -40), (0.30, 50), (0.50, 30), (0.62, 24), (1.00, -12)]
 
@@ -143,12 +143,20 @@ def main():
         names = [f"frame-{j+1:04d}" for j in range(n)]
 
     os.makedirs(outdir, exist_ok=True)
+    done = sum(1 for n in names if os.path.exists(os.path.join(outdir, f"{n}.png")))
+    if done:
+        print(f"RESUME: {done}/{len(names)} frames already rendered — skipping those", flush=True)
     t0 = time.time()
+    rendered = 0
     for idx, (p, name) in enumerate(zip(ps, names)):
+        path = os.path.join(outdir, f"{name}.png")
+        if os.path.exists(path):
+            continue
         apply_pose(rig, cap, cam, p)
-        render_to(sc, os.path.join(outdir, f"{name}.png"))
+        render_to(sc, path)
+        rendered += 1
         el = time.time() - t0
-        per = el / (idx + 1)
+        per = el / max(1, rendered)
         print(f"PROGRESS {idx+1}/{len(ps)} p={p:.3f} {per:.1f}s/frame eta {per*(len(ps)-idx-1)/60:.1f}min", flush=True)
     print("DONE", outdir)
 
