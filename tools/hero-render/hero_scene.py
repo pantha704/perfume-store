@@ -9,7 +9,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TEX = os.path.join(HERE, "textures")
 
 CAP_REST_CENTER = 0.1170
-CAP_LIFT        = 0.0480
+CAP_LIFT        = 0.0260
 
 # ---------- helpers ----------
 def clean():
@@ -288,7 +288,7 @@ def build():
         smooth(bub, 60)
         bubbles.append(bub)
 
-    # ---- chrome collar + sprayer ----
+    # ---- chrome collar + sprayer (clearly readable when the cap lifts) ----
     chrome = mat_new("Chrome", base=(0.86, 0.87, 0.90, 1), metallic=1.0, rough=0.16)
     collar_parts = []
     zc = 0.0870
@@ -304,21 +304,21 @@ def build():
     base_ring.data.materials.append(chrome)
     smooth(base_ring, 30)
     collar_parts.append(base_ring)
-    sprayer = new_mesh_obj("Sprayer", cylinder(0.0086, 0.0080))
-    sprayer.location = (0, 0, 0.0990)
+    # pump body: wide chrome cylinder the actuator sits on (reads as a real sprayer)
+    sprayer = new_mesh_obj("Sprayer", cylinder(0.0100, 0.0080))
+    sprayer.location = (0, 0, 0.1036)      # 0.0996..0.1076
     sprayer.data.materials.append(chrome)
     smooth(sprayer, 36)
     collar_parts.append(sprayer)
 
-    black = mat_new("Black", base=(0.018, 0.017, 0.016, 1), rough=0.32)
-    bnb = cube(0.0080, 0.0080, 0.0060)
-    bevel(bnb, 0.0012, 3)
-    nozzle = new_mesh_obj("NozzleButton", bnb)
-    nozzle.location = (0, 0, 0.1062)
-    nozzle.data.materials.append(black)
-    smooth(nozzle, 24)
-    tip = new_mesh_obj("NozzleTip", cylinder(0.0022, 0.0050))
-    tip.location = (0, -0.0062, 0.1060)
+    black = mat_new("Black", base=(0.015, 0.014, 0.013, 1), rough=0.50)
+    # actuator: wide pressable cap with a side nozzle (tucks inside the crystal cap)
+    knob = new_mesh_obj("NozzleButton", cylinder(0.0080, 0.0070, segs=48))
+    knob.location = (0, 0, 0.1111)         # 0.1076..0.1146
+    knob.data.materials.append(black)
+    smooth(knob, 40)
+    tip = new_mesh_obj("NozzleTip", cylinder(0.0024, 0.0080))
+    tip.location = (0, -0.0056, 0.1110)
     tip.rotation_euler = (math.radians(90), 0, 0)
     tip.data.materials.append(black)
     smooth(tip, 30)
@@ -357,7 +357,7 @@ def build():
 
     # ---- rig ----
     rig = link(bpy.data.objects.new("Rig", None))
-    for o in [flask, liquid, nozzle, tip] + facets + bubbles + collar_parts:
+    for o in [flask, liquid, knob, tip] + facets + bubbles + collar_parts:
         o.parent = rig
     cap.parent = rig
     wordmark.parent = rig
