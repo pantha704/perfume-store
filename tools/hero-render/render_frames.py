@@ -33,9 +33,9 @@ def pw(p, keys, ease=smooth):
 
 # ---------------- choreography (p = hero scroll progress 0..1) ----------------
 CAM_AZ  = [(0.00, -16), (0.30, -6), (0.50, -4), (0.62, -3), (1.00, -7)]
-CAM_D   = [(0.00, 0.385), (0.30, 0.372), (0.50, 0.180), (0.62, 0.172), (1.00, 0.385)]
-CAM_Z   = [(0.00, 0.068), (0.30, 0.072), (0.50, 0.114), (0.62, 0.117), (1.00, 0.074)]
-CAM_TZ  = [(0.00, 0.062), (0.30, 0.064), (0.50, 0.115), (0.62, 0.118), (1.00, 0.062)]
+CAM_D   = [(0.00, 0.345), (0.30, 0.333), (0.50, 0.168), (0.62, 0.161), (1.00, 0.345)]
+CAM_Z   = [(0.00, 0.068), (0.30, 0.072), (0.50, 0.112), (0.62, 0.115), (1.00, 0.074)]
+CAM_TZ  = [(0.00, 0.062), (0.30, 0.064), (0.50, 0.110), (0.62, 0.113), (1.00, 0.062)]
 FSTOP   = [(0.00, 4.2), (0.30, 3.4), (0.50, 2.5), (0.62, 2.4), (1.00, 3.6)]
 BOT_AZ  = [(0.00, -40), (0.30, 50), (0.50, 30), (0.62, 24), (1.00, -12)]
 
@@ -44,13 +44,15 @@ def pose(p):
     az = math.radians(pw(p, BOT_AZ))
     wobble = math.sin(p * math.pi * 2.2) * 2.5 * (1 - lin(p, 0.16, 0.42))
     tilt = math.radians(3.5 + wobble)
-    hover = 0.008 * (1 - smooth(lin(p, 0.55, 0.90)))
-    bob = math.sin(p * math.pi * 2.6) * 0.0016 * (1 - lin(p, 0.18, 0.44))
+    hover = 0.005 * (1 - smooth(lin(p, 0.55, 0.90)))
+    bob = math.sin(p * math.pi * 2.6) * 0.0012 * (1 - lin(p, 0.18, 0.44))
     lift = 0.0
     if 0.50 <= p:
         lift = hero_scene.CAP_LIFT * ease_out(lin(p, 0.50, 0.62))
         lift *= 1.0 - ease_io(lin(p, 0.70, 0.88))
-    spin = (math.radians(28) * ease_out(lin(p, 0.50, 0.62))) * (1.0 - ease_io(lin(p, 0.70, 0.88)))
+    spin = (math.radians(18) * ease_out(lin(p, 0.50, 0.62))) * (1.0 - ease_io(lin(p, 0.70, 0.88)))
+    open_fac = lift / max(1e-9, hero_scene.CAP_LIFT)
+    cap_tilt = math.radians(-6.0) * open_fac
     phi = math.radians(-pw(p, CAM_AZ))          # camera azimuth (deg, + = to the left of -Y)
     d = pw(p, CAM_D)
     z = pw(p, CAM_Z)
@@ -60,7 +62,7 @@ def pose(p):
     return {
         "loc": loc, "tgt": tgt, "fstop": pw(p, FSTOP),
         "rig_z": hover + bob, "rig_az": az, "rig_tilt": tilt,
-        "cap_lift": lift, "cap_spin": spin,
+        "cap_lift": lift, "cap_spin": spin, "cap_tilt": cap_tilt,
     }
 
 # ---------------- scene setup ----------------
@@ -101,7 +103,7 @@ def apply_pose(rig, cap, cam, p):
     rig.rotation_euler = (v["rig_tilt"], 0, v["rig_az"])
     CAP_BASE = hero_scene.CAP_REST_CENTER   # cap rest height
     cap.location = (0, 0, CAP_BASE + v["cap_lift"])
-    cap.rotation_euler = (0, 0, v["cap_spin"])
+    cap.rotation_euler = (v["cap_tilt"], 0, v["cap_spin"])
     cam.location = v["loc"]
     cam.rotation_quaternion = (v["tgt"] - v["loc"]).to_track_quat("-Z", "Y")
     cam.data.dof.focus_distance = (v["tgt"] - v["loc"]).length
