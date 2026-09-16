@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
+import { ScrollParallax } from "@/components/layout/ScrollParallax";
 import { AnalyticsPageView } from "@/components/layout/AnalyticsPageView";
 
 const display = Cormorant_Garamond({ subsets:["latin"], variable:"--font-display", display:"swap", weight:["400","500","600"] });
@@ -19,5 +20,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width:"device-width", initialScale:1, themeColor:"#0d0c0b", colorScheme:"light" };
 
 export default function RootLayout({children}:{children:React.ReactNode}) {
-  return <html lang="en" className={`${display.variable} ${sans.variable} ${script.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><SmoothScroll/><AnalyticsPageView/><Header/><main id="main">{children}</main><Footer/></body></html>;
+  return <html lang="en" className={`${display.variable} ${sans.variable} ${script.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><SmoothScroll/><ScrollParallax/><AnalyticsPageView/><Header/><main id="main">{children}</main><Footer/></body></html>;
 }
