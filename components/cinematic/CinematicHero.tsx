@@ -147,8 +147,8 @@ export function CinematicHero() {
   return <section ref={root} className="cinematic-hero" aria-label="Relapse fragrance introduction">
     <div className="cinematic-sticky">
       <div className="hero-grain" aria-hidden="true" />
-      <div className="hero-orbit" aria-hidden="true"><span>01</span><span>EAU DE PARFUM</span><span>INDIA</span></div>
-      <canvas ref={canvas} className="hero-canvas" aria-label="Animated placeholder bottle artwork for Relapse Invictus" />
+      <div className="hero-orbit" data-parallax-end="0.10" aria-hidden="true"><span>01</span><span>EAU DE PARFUM</span><span>INDIA</span></div>
+      <canvas ref={canvas} className="hero-canvas" data-parallax-end="0.05" aria-label="Animated placeholder bottle artwork for Relapse Invictus" />
       <div data-hero-intro className="hero-intro">
         <p className="kicker light">A fragrance house built in layers</p>
         <h1><span>Leave</span><span>a trace.</span></h1>
