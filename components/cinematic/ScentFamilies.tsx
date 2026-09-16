@@ -5,10 +5,10 @@ import { ArrowUpRight } from "@/components/ui/Icons";
 export function ScentFamilies({ products }: { products: Product[] }) {
   const families = ["Woody","Floral","Smoky","Fresh"];
   return <section className="family-band">
-    <div className="family-band-intro" data-parallax="0.06"><p className="kicker light">Navigate by temperature</p><h2>What kind of air<br/>do you want?</h2></div>
+    <div className="family-band-intro" data-parallax="0.10"><p className="kicker light">Navigate by temperature</p><h2>What kind of air<br/>do you want?</h2></div>
     <div className="family-list">{families.map((family,index) => {
       const p = products.find((product) => product.family === family);
-      return <Link href={`/shop/${family.toLowerCase()}`} className="family-row" key={family} data-parallax={String(0.03 + index * 0.015)} style={{"--accent":p?.accent || "#ad8a58"} as React.CSSProperties}><span>0{index+1}</span><strong>{family}</strong><em>{family === "Woody" ? "dry · textural · grounded" : family === "Floral" ? "petal · spice · skin" : family === "Smoky" ? "embers · leather · resin" : "mineral · citrus · air"}</em><ArrowUpRight width={22}/></Link>;
+      return <Link href={`/shop/${family.toLowerCase()}`} className="family-row" key={family} data-parallax={String(0.06 + index * 0.022)} style={{"--accent":p?.accent || "#ad8a58"} as React.CSSProperties}><span>0{index+1}</span><strong>{family}</strong><em>{family === "Woody" ? "dry · textural · grounded" : family === "Floral" ? "petal · spice · skin" : family === "Smoky" ? "embers · leather · resin" : "mineral · citrus · air"}</em><ArrowUpRight width={22}/></Link>;
     })}</div>
   </section>;
 }

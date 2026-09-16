@@ -24,6 +24,7 @@ export function ScrollParallax() {
     if (window.matchMedia("(max-width: 680px)").matches) return;
 
     const ctx = gsap.context(() => {
+      // classic parallax: drift across each block's own viewport crossing
       gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
         const raw = parseFloat(el.dataset.parallax || "0.06");
         const speed = Number.isFinite(raw) ? Math.min(0.2, Math.max(0.01, raw)) : 0.06;
@@ -41,6 +42,44 @@ export function ScrollParallax() {
             scrollTrigger: {
               trigger: el,
               start: "top bottom",
+              end: "bottom top",
+              scrub: 0.55,
+              onUpdate: (self) => {
+                const next = gsap.utils.clamp(-18, 18, self.getVelocity() * 0.012);
+                if (Math.abs(next - tail) > 0.5) {
+                  tail = next;
+                  tailTo(next);
+                }
+              },
+            },
+          },
+        );
+      });
+
+      // hero exit parallax: only after the frame sequence completes and the next
+      // section starts entering (hero bottom hits viewport bottom → hero leaves).
+      // Starts from zero so the hero composition is untouched during the sequence;
+      // blocks lag progressively as the section exits.
+      gsap.utils.toArray<HTMLElement>("[data-parallax-end]").forEach((el) => {
+        const raw = parseFloat(el.dataset.parallaxEnd || "0.06");
+        const speed = Number.isFinite(raw) ? Math.min(0.2, Math.max(0.01, raw)) : 0.06;
+        const scope = el.closest<HTMLElement>(".cinematic-hero") || el;
+        // respect any CSS transform the element already carries (e.g. translateY(-50%) centering)
+        const base = Number(gsap.getProperty(el, "yPercent")) || 0;
+
+        const tailTo = gsap.quickTo(el, "y", { duration: 0.85, ease: "back.out(1.4)" });
+        let tail = 0;
+
+        gsap.fromTo(
+          el,
+          { yPercent: base },
+          {
+            yPercent: base + speed * 100,
+            ease: "none",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: scope,
+              start: "bottom bottom",
               end: "bottom top",
               scrub: 0.55,
               onUpdate: (self) => {
