@@ -21,13 +21,39 @@ gsap.registerPlugin(ScrollTrigger);
 export function ScrollParallax() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (window.matchMedia("(max-width: 680px)").matches) return;
+
+    // phones get a gentler version: same layering, ~55% amplitude
+    const phone = window.matchMedia("(max-width: 680px)").matches;
+    const damp = phone ? 0.55 : 1;
 
     const ctx = gsap.context(() => {
+      // ---- entry reveals: one-shot, directional, professional pattern ----
+      // sides for objects that live in a column, bottom-fade for text.
+      const REVEAL: Record<string, [number, number]> = {
+        left: [-36, 0],
+        right: [36, 0],
+        up: [0, 30],
+        down: [0, -30],
+      };
+      gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
+        const [dx, dy] = REVEAL[el.dataset.reveal || "up"] ?? REVEAL.up;
+        const delay = parseFloat(el.dataset.revealDelay || "0") || 0;
+        gsap.set(el, { autoAlpha: 0, x: dx, y: dy });
+        gsap.to(el, {
+          autoAlpha: 1,
+          x: 0,
+          y: 0,
+          duration: 0.95,
+          ease: "power3.out",
+          delay,
+          scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        });
+      });
+
       // classic parallax: drift across each block's own viewport crossing
       gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((el) => {
         const raw = parseFloat(el.dataset.parallax || "0.06");
-        const speed = Number.isFinite(raw) ? Math.min(0.2, Math.max(0.01, raw)) : 0.06;
+        const speed = (Number.isFinite(raw) ? Math.min(0.2, Math.max(0.01, raw)) : 0.06) * damp;
 
         // elastic settle: trails the scroll velocity, glides back with a whisper of overshoot
         const tailTo = gsap.quickTo(el, "y", { duration: 0.85, ease: "back.out(1.4)" });
