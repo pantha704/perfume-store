@@ -4,10 +4,10 @@ import type { Product } from "@/lib/types";
 import { formatINR } from "@/lib/money";
 import { ArrowUpRight } from "@/components/ui/Icons";
 
-export function ProductCard({ product, index = 0, feature = false, parallax }: { product: Product; index?: number; feature?: boolean; parallax?: number }) {
+export function ProductCard({ product, index = 0, feature = false, parallax, reveal, revealDelay }: { product: Product; index?: number; feature?: boolean; parallax?: number; reveal?: string; revealDelay?: number }) {
   const bottle = product.variants.find((v) => v.kind === "bottle") || product.variants[0];
   const sample = product.variants.find((v) => v.kind === "sample");
-  return <article className={`product-card ${feature ? "product-card-feature" : ""}`} data-parallax={parallax !== undefined ? String(parallax) : undefined} style={{ "--accent": product.accent } as React.CSSProperties}>
+  return <article className={`product-card ${feature ? "product-card-feature" : ""}`} data-parallax={parallax !== undefined ? String(parallax) : undefined} data-reveal={reveal} data-reveal-delay={revealDelay !== undefined ? String(revealDelay) : undefined} style={{ "--accent": product.accent } as React.CSSProperties}>
     <Link href={`/product/${product.slug}`} className="product-art">
       <div className="product-index">{String(index + 1).padStart(2,"0")}</div>
       <div className="product-halo" aria-hidden="true" />

@@ -9,8 +9,8 @@ const csp = [
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://challenges.cloudflare.com https://*.posthog.com",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com https://challenges.cloudflare.com https://*.posthog.com",
+  "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://cdn.razorpay.com https://challenges.cloudflare.com https://*.posthog.com",
+  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.razorpay.com https://challenges.cloudflare.com https://*.posthog.com",
   "frame-src https://api.razorpay.com https://checkout.razorpay.com https://challenges.cloudflare.com",
   // Only upgrade to HTTPS when the deployed site is actually served over HTTPS.
   // Over plain http (local dev, CI test server) the directive forces assets onto
