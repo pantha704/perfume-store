@@ -36,7 +36,9 @@ export function ScrollParallax() {
         down: [0, -30],
       };
       gsap.utils.toArray<HTMLElement>("[data-reveal]").forEach((el) => {
-        const [dx, dy] = REVEAL[el.dataset.reveal || "up"] ?? REVEAL.up;
+        // phones: always enter from below — side offsets would widen the document
+        const dir = phone ? "up" : el.dataset.reveal || "up";
+        const [dx, dy] = REVEAL[dir] ?? REVEAL.up;
         const delay = parseFloat(el.dataset.revealDelay || "0") || 0;
         gsap.set(el, { autoAlpha: 0, x: dx, y: dy });
         gsap.to(el, {
