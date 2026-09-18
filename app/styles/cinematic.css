@@ -30,9 +30,9 @@
 .offer-nav button{width:46px;height:46px;border:1px solid var(--line);background:transparent;font-size:16px;cursor:pointer;transition:background .3s,color .3s,opacity .3s}
 .offer-nav button:hover:not(:disabled){background:var(--ink);color:var(--cream)}
 .offer-nav button:disabled{opacity:.3;cursor:default}
-.offer-rail{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:46px max(36px,calc((100vw - min(1480px,calc(100vw - 72px)))/2)) 8px;scrollbar-width:none}
+.offer-rail{display:flex;justify-content:safe center;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:46px max(36px,calc((100vw - min(1480px,calc(100vw - 72px)))/2)) 8px;scroll-padding-inline:max(36px,calc((100vw - min(1480px,calc(100vw - 72px)))/2));scrollbar-width:none}
 .offer-rail::-webkit-scrollbar{display:none}
-.offer-card{--accent:#ad8a58;scroll-snap-align:start;flex:0 0 min(560px,84vw);min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:38px 34px;border:1px solid var(--line);background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)),var(--paper) 72%);transition:opacity .45s var(--ease-out),transform .45s var(--ease-out)}
+.offer-card{--accent:#ad8a58;scroll-snap-align:start;flex:0 0 min(480px,84vw);min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:38px 34px;border:1px solid var(--line);background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)),var(--paper) 72%);transition:opacity .45s var(--ease-out),transform .45s var(--ease-out)}
 .offer-card:not(.active){opacity:.52;transform:scale(.985)}
 .offer-card .offer-kicker{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
 .offer-card strong{font-family:var(--display);font-weight:400;font-size:clamp(38px,3.6vw,58px);line-height:.9;letter-spacing:-.04em}

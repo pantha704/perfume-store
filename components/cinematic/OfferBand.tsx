@@ -8,8 +8,18 @@ import { OFFERS } from "@/lib/offers";
 export function OfferBand() {
   const rail = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [scrollable, setScrollable] = useState(false);
 
-  // Active card = the one resting at the rail's leading edge (native snap does the motion).
+  // Controls only exist when the rail actually has somewhere to go.
+  useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+    const measure = () => setScrollable(el.scrollWidth > el.clientWidth + 2);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   useEffect(() => {
     const el = rail.current;
     if (!el) return;
@@ -38,7 +48,7 @@ export function OfferBand() {
   return <section className="offer-band" aria-label="Current offers">
     <div className="offer-head" data-reveal="up">
       <div><p className="kicker">Running now</p><h2>Worth taking,<br/><em>nothing urgent.</em></h2></div>
-      <div className="offer-nav">
+      <div className="offer-nav" hidden={!scrollable}>
         <button onClick={() => go(active - 1)} disabled={active === 0} aria-label="Previous offer">←</button>
         <button onClick={() => go(active + 1)} disabled={active === OFFERS.length - 1} aria-label="Next offer">→</button>
       </div>
@@ -51,7 +61,7 @@ export function OfferBand() {
         <span className="offer-cta">{offer.cta} <ArrowUpRight width={16}/></span>
       </Link>)}
     </div>
-    <div className="offer-dots" role="tablist" aria-label="Offer slides">
+    <div className="offer-dots" role="tablist" aria-label="Offer slides" hidden={!scrollable}>
       {OFFERS.map((offer, index) => <button key={offer.id} role="tab" aria-selected={index === active} aria-label={`Offer ${index + 1}: ${offer.title}`} className={index === active ? "active" : ""} onClick={() => go(index)}/>)}
     </div>
   </section>;
