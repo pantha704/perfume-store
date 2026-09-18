@@ -33,15 +33,16 @@
 .offer-rail{display:flex;justify-content:safe center;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:46px max(36px,calc((100vw - min(1480px,calc(100vw - 72px)))/2)) 8px;scroll-padding-inline:max(36px,calc((100vw - min(1480px,calc(100vw - 72px)))/2));scrollbar-width:none}
 .offer-rail::-webkit-scrollbar{display:none}
 .offer-card{--accent:#ad8a58;position:relative;overflow:hidden;scroll-snap-align:start;flex:0 0 min(480px,84vw);min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;padding:38px 34px;border:1px solid var(--line);background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)),var(--paper) 72%);transition:opacity .45s var(--ease-out),transform .45s var(--ease-out)}
-.offer-card:not(.active){opacity:.52;transform:scale(.985)}
+.offer-card:not(.active){opacity:.82;transform:scale(.99)}
 .offer-card .offer-kicker{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
 .offer-card strong{font-family:var(--display);font-weight:400;font-size:clamp(38px,3.6vw,58px);line-height:.9;letter-spacing:-.04em}
 .offer-card p{margin:0;font-size:13px;color:var(--ink-soft);max-width:400px}
 .offer-card .offer-cta{display:inline-flex;align-items:center;gap:12px;font-size:12px;font-weight:650;border-bottom:1px solid var(--line);padding-bottom:5px;width:max-content}
-.offer-glow{position:absolute;inset:-14%;background:radial-gradient(circle at 24% 18%,color-mix(in srgb,var(--accent) 48%,transparent),transparent 64%);opacity:.55;pointer-events:none;transition:transform .75s var(--ease-out),opacity .75s var(--ease-out)}
-.offer-image{position:absolute;inset:-8% -4% -4% 26%;background-size:cover;background-position:center;opacity:.45;pointer-events:none;mask-image:linear-gradient(90deg,transparent,black 58%);-webkit-mask-image:linear-gradient(90deg,transparent,black 58%);transition:transform .9s var(--ease-out),opacity .9s var(--ease-out)}
-.offer-card:hover .offer-image,.offer-card:focus-visible .offer-image{transform:scale(.94) translateX(-6px) translateY(8px);opacity:.6}
-.offer-body{position:relative;display:flex;flex-direction:column;gap:14px;transition:transform .75s var(--ease-out)}
+.offer-glow{position:absolute;inset:-14%;z-index:0;background:radial-gradient(circle at 24% 18%,color-mix(in srgb,var(--accent) 48%,transparent),transparent 64%);opacity:.55;pointer-events:none;transition:transform .75s var(--ease-out),opacity .75s var(--ease-out)}
+.offer-image{position:absolute;inset:-8% -4% -4% 16%;z-index:0;background-size:cover;background-position:center;opacity:.92;filter:saturate(.08) contrast(.96);pointer-events:none;transition:transform .9s var(--ease-out),opacity .7s var(--ease-out),filter .7s var(--ease-out)}
+.offer-card:hover .offer-image,.offer-card:focus-visible .offer-image{transform:scale(.94) translateX(-6px) translateY(8px);filter:saturate(1) contrast(1);opacity:1}
+.offer-body{position:relative;z-index:2;display:flex;flex-direction:column;gap:14px;transition:transform .75s var(--ease-out)}
+.offer-card:before{content:"";position:absolute;inset:0 30% 0 0;z-index:1;background:linear-gradient(90deg,color-mix(in srgb,var(--paper) 80%,transparent),color-mix(in srgb,var(--paper) 32%,transparent) 72%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);mask-image:linear-gradient(90deg,black 62%,transparent);-webkit-mask-image:linear-gradient(90deg,black 62%,transparent);pointer-events:none}
 .offer-card:hover .offer-glow,.offer-card:focus-visible .offer-glow{transform:scale(.88) translateY(12px);opacity:.9}
 .offer-card:hover .offer-body,.offer-card:focus-visible .offer-body{transform:scale(1.025) translateY(-5px)}
 .offer-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
