@@ -8,6 +8,8 @@ import { PerformancePanel } from "@/components/product/PerformancePanel";
 import { PdpGallery } from "@/components/product/PdpGallery";
 import { UsageGuide } from "@/components/product/UsageGuide";
 import { AdditionalInfo } from "@/components/product/AdditionalInfo";
+import { ReviewsSection } from "@/components/product/ReviewsSection";
+import { ContactSection } from "@/components/product/ContactSection";
 import { StickyBuyBar } from "@/components/commerce/StickyBuyBar";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductViewTracker } from "@/components/product/ProductViewTracker";
@@ -23,7 +25,9 @@ export default async function ProductPage({params}:{params:Promise<{slug:string}
   <section className="performance-section"><div className="section-shell"><PerformancePanel product={p}/></div></section>
   <section className="scale-section section-shell"><div className="scale-copy"><p className="kicker">04 / Scale & ritual</p><h2>Know what<br/>you are buying.</h2><p>Final product photography should include an in-hand frame or a known object beside every bottle. Placeholder artwork is intentionally labelled until those assets exist.</p></div><div className="scale-figure"><Image src={p.image} alt={`Scale placeholder for ${p.name}`} width={420} height={540}/><div className="scale-line"><span>approx.</span><i/><b>50 ml format</b></div></div></section>
   <UsageGuide/>
+  <ReviewsSection product={p}/>
   <AdditionalInfo product={p}/>
+  <ContactSection product={p}/>
   {related.length?<section className="related section-shell"><header><p className="kicker">If this is close</p><h2>Follow the material,<br/><em>not the dupe.</em></h2></header><div>{related.map((r,i)=><ProductCard key={r.id} product={r} index={i}/>)}</div></section>:null}
   <StickyBuyBar product={p}/>
 </div>}
