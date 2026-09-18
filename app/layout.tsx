@@ -14,7 +14,7 @@ const script = Great_Vibes({ subsets:["latin"], variable:"--font-script", displa
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://relapse.example"),
-  title: { default:"Relapse Perfumes — Fragrance as atmosphere", template:"%s — Relapse" },
+  title: { default:"Relapse Perfumes", template:"%s — Relapse Perfumes" },
   description:"Relapse Perfumes — embrace the everyday. Five scents built in layers, with samples, travel sizes and full bottles.",
   openGraph:{title:"Relapse Perfumes",description:"Embrace the everyday.",type:"website",images:["/og.svg"]},
 };
