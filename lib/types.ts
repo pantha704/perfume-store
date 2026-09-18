@@ -61,6 +61,8 @@ export interface Product {
   concentration: string;
   image: string;
   imageAlt: string;
+  /** Additional product photos for the PDP gallery (first image stays `image`). */
+  gallery?: string[];
   accent: string;
   notes: FragranceNotes;
   featured: boolean;
