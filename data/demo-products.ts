@@ -1,10 +1,21 @@
-import type { Product } from "@/lib/types";
+import type { FulfillmentMapping, Product } from "@/lib/types";
 
 // Real product data reconstructed from client-supplied material (WhatsApp chat
-// notes, supplied posters and the printed catalogue card). Fields the client has
-// not supplied yet (prices, SKUs, sizes, performance metrics) remain clearly
-// placeholder demo values — see docs/asset-placement-audit.md.
+// notes, supplied posters and the printed catalogue card).
+//
+// PRICES (2026-09-18): sell prices are CLIENT-SUPPLIED — 8 ml ₹99 · 30 ml ₹299 ·
+// 50 ml ₹449 · Set of 5 ₹399. Compare-at (MRP) values are realistic DEMO
+// ASSUMPTIONS (consistent ~33% off) pending the client's final MRP list.
+// Everything else not yet supplied (SKUs, weights, performance metrics) stays a
+// clearly-placeholder demo value — see docs/asset-placement-audit.md.
 const photo = (slug: string) => `/products/relapse/${slug}.webp`;
+
+const manualOnly: FulfillmentMapping[] = [{ provider: "manual", enabled: true, priority: 100 }];
+const bottleMappings = (sku: string): FulfillmentMapping[] => [
+  { provider: "amazon_mcf", providerSku: `REPLACE-AMAZON-SKU-${sku}`, inventorySku: `REPLACE-SELLER-SKU-${sku}`, enabled: false, priority: 10 },
+  { provider: "shiprocket", providerSku: sku, enabled: false, priority: 20 },
+  { provider: "manual", enabled: true, priority: 100 },
+];
 
 export const demoProducts: Product[] = [
   {
@@ -23,10 +34,9 @@ export const demoProducts: Product[] = [
     notes: { top: ["Sea notes", "Grapefruit", "Mandarin orange"], heart: ["Bay leaf", "Jasmine"], base: ["Ambergris", "Guaiac wood", "Oakmoss", "Patchouli"] },
     performance: { longevityHours: [7, 9], sillage: "noticeable", seasons: ["Summer", "Monsoon", "All year"], occasions: ["Everyday", "Office", "Evening"], dayNight: "both", wearsLike: "sea air, bright citrus and warm ambergris" },
     variants: [
-      { id: "var_invictus_2", sku: "REL-INV-02", label: "2 ml sample", sizeMl: 2, pricePaise: 24900, available: true, kind: "sample", weightGrams: 40, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_invictus_10", sku: "REL-INV-10", label: "10 ml travel", sizeMl: 10, pricePaise: 49900, available: true, kind: "travel", weightGrams: 90, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_invictus_50", sku: "REL-INV-50", label: "50 ml", sizeMl: 50, pricePaise: 149900, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-INV50", inventorySku: "REPLACE-SELLER-SKU-INV50", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-INV-50", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_invictus_100", sku: "REL-INV-100", label: "100 ml", sizeMl: 100, pricePaise: 229900, available: true, kind: "bottle", weightGrams: 480, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-INV100", inventorySku: "REPLACE-SELLER-SKU-INV100", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-INV-100", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] }
+      { id: "var_invictus_08", sku: "REL-INV-08", label: "8 ml", sizeMl: 8, pricePaise: 9900, compareAtPaise: 14900, available: true, kind: "travel", weightGrams: 60, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] },
+      { id: "var_invictus_30", sku: "REL-INV-30", label: "30 ml", sizeMl: 30, pricePaise: 29900, compareAtPaise: 44900, available: true, kind: "bottle", weightGrams: 180, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-INV-30") },
+      { id: "var_invictus_50", sku: "REL-INV-50", label: "50 ml", sizeMl: 50, pricePaise: 44900, compareAtPaise: 67500, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-INV-50") }
     ]
   },
   {
@@ -45,10 +55,9 @@ export const demoProducts: Product[] = [
     notes: { top: ["Jasmine bud extract"], heart: ["Tuberose"], base: ["Rangoon Creeper"] },
     performance: { longevityHours: [6, 8], sillage: "noticeable", seasons: ["Spring", "Autumn", "Cool evenings"], occasions: ["Dinner", "Celebrations", "Everyday"], dayNight: "both", wearsLike: "fresh petals, tuberose cream and a powdery floral close" },
     variants: [
-      { id: "var_velvet_2", sku: "REL-VBL-02", label: "2 ml sample", sizeMl: 2, pricePaise: 22900, available: true, kind: "sample", weightGrams: 40, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_velvet_10", sku: "REL-VBL-10", label: "10 ml travel", sizeMl: 10, pricePaise: 44900, available: true, kind: "travel", weightGrams: 90, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_velvet_50", sku: "REL-VBL-50", label: "50 ml", sizeMl: 50, pricePaise: 139900, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-VBL50", inventorySku: "REPLACE-SELLER-SKU-VBL50", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-VBL-50", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_velvet_100", sku: "REL-VBL-100", label: "100 ml", sizeMl: 100, pricePaise: 219900, available: true, kind: "bottle", weightGrams: 480, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-VBL100", inventorySku: "REPLACE-SELLER-SKU-VBL100", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-VBL-100", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] }
+      { id: "var_velvet_08", sku: "REL-VBL-08", label: "8 ml", sizeMl: 8, pricePaise: 9900, compareAtPaise: 14900, available: true, kind: "travel", weightGrams: 60, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] },
+      { id: "var_velvet_30", sku: "REL-VBL-30", label: "30 ml", sizeMl: 30, pricePaise: 29900, compareAtPaise: 44900, available: true, kind: "bottle", weightGrams: 180, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-VBL-30") },
+      { id: "var_velvet_50", sku: "REL-VBL-50", label: "50 ml", sizeMl: 50, pricePaise: 44900, compareAtPaise: 67500, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-VBL-50") }
     ]
   },
   {
@@ -67,9 +76,9 @@ export const demoProducts: Product[] = [
     notes: { top: ["Mysore sandalwood"], heart: ["Cedar"], base: ["Creamy woods"] },
     performance: { longevityHours: [7, 10], sillage: "close", seasons: ["All year", "Monsoon", "Winter"], occasions: ["Office", "Travel", "Dinner"], dayNight: "both", wearsLike: "creamy sandalwood and dry cedar" },
     variants: [
-      { id: "var_sandal_2", sku: "REL-SAN-02", label: "2 ml sample", sizeMl: 2, pricePaise: 24900, available: true, kind: "sample", weightGrams: 40, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_sandal_10", sku: "REL-SAN-10", label: "10 ml travel", sizeMl: 10, pricePaise: 54900, available: true, kind: "travel", weightGrams: 90, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_sandal_100", sku: "REL-SAN-100", label: "100 ml", sizeMl: 100, pricePaise: 239900, available: true, kind: "bottle", weightGrams: 480, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-SAN100", inventorySku: "REPLACE-SELLER-SKU-SAN100", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-SAN-100", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] }
+      { id: "var_sandal_08", sku: "REL-SAN-08", label: "8 ml", sizeMl: 8, pricePaise: 9900, compareAtPaise: 14900, available: true, kind: "travel", weightGrams: 60, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] },
+      { id: "var_sandal_30", sku: "REL-SAN-30", label: "30 ml", sizeMl: 30, pricePaise: 29900, compareAtPaise: 44900, available: true, kind: "bottle", weightGrams: 180, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-SAN-30") },
+      { id: "var_sandal_50", sku: "REL-SAN-50", label: "50 ml", sizeMl: 50, pricePaise: 44900, compareAtPaise: 67500, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-SAN-50") }
     ]
   },
   {
@@ -88,9 +97,9 @@ export const demoProducts: Product[] = [
     notes: { top: ["Whisky", "Tobacco", "Sharp spice"], heart: ["Cinnamon", "Coriander", "Sweet vanilla"], base: ["Oudh (Agarwood)", "Sandalwood", "Patchouli", "Rich leather"] },
     performance: { longevityHours: [9, 12], sillage: "room-filling", seasons: ["Winter", "Autumn", "Cool nights"], occasions: ["Night out", "Occasions", "Dinner"], dayNight: "night", wearsLike: "boozy warmth, spice and smoky leather" },
     variants: [
-      { id: "var_whisky_2", sku: "REL-WHS-02", label: "2 ml sample", sizeMl: 2, pricePaise: 27900, available: true, kind: "sample", weightGrams: 40, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_whisky_10", sku: "REL-WHS-10", label: "10 ml travel", sizeMl: 10, pricePaise: 64900, available: true, kind: "travel", weightGrams: 90, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_whisky_50", sku: "REL-WHS-50", label: "50 ml", sizeMl: 50, pricePaise: 179900, available: true, kind: "bottle", weightGrams: 340, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-WHS50", inventorySku: "REPLACE-SELLER-SKU-WHS50", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-WHS-50", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] }
+      { id: "var_whisky_08", sku: "REL-WHS-08", label: "8 ml", sizeMl: 8, pricePaise: 9900, compareAtPaise: 14900, available: true, kind: "travel", weightGrams: 60, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] },
+      { id: "var_whisky_30", sku: "REL-WHS-30", label: "30 ml", sizeMl: 30, pricePaise: 29900, compareAtPaise: 44900, available: true, kind: "bottle", weightGrams: 180, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-WHS-30") },
+      { id: "var_whisky_50", sku: "REL-WHS-50", label: "50 ml", sizeMl: 50, pricePaise: 44900, compareAtPaise: 67500, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-WHS-50") }
     ]
   },
   {
@@ -109,10 +118,9 @@ export const demoProducts: Product[] = [
     notes: { top: ["Seawater", "Mint", "Lavender", "Green nuances", "Rosemary", "Calone", "Coriander"], heart: ["Sandalwood", "Neroli", "Geranium", "Jasmine"], base: ["Musk", "Oakmoss", "Cedar", "Tobacco", "Ambergris"] },
     performance: { longevityHours: [5, 7], sillage: "close", seasons: ["Summer", "Spring", "Hot days"], occasions: ["Daily wear", "Office", "Travel"], dayNight: "day", wearsLike: "cold seawater, crushed green herbs and musk" },
     variants: [
-      { id: "var_bold_2", sku: "REL-BLD-02", label: "2 ml sample", sizeMl: 2, pricePaise: 19900, available: true, kind: "sample", weightGrams: 40, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_bold_10", sku: "REL-BLD-10", label: "10 ml travel", sizeMl: 10, pricePaise: 39900, available: true, kind: "travel", weightGrams: 90, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_bold_50", sku: "REL-BLD-50", label: "50 ml", sizeMl: 50, pricePaise: 119900, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-BLD50", inventorySku: "REPLACE-SELLER-SKU-BLD50", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-BLD-50", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] },
-      { id: "var_bold_100", sku: "REL-BLD-100", label: "100 ml", sizeMl: 100, pricePaise: 189900, available: true, kind: "bottle", weightGrams: 480, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: [{ provider: "amazon_mcf", providerSku: "REPLACE-AMAZON-SKU-BLD100", inventorySku: "REPLACE-SELLER-SKU-BLD100", enabled: false, priority: 10 }, { provider: "shiprocket", providerSku: "REL-BLD-100", enabled: false, priority: 20 }, { provider: "manual", enabled: true, priority: 100 }] }
+      { id: "var_bold_08", sku: "REL-BLD-08", label: "8 ml", sizeMl: 8, pricePaise: 9900, compareAtPaise: 14900, available: true, kind: "travel", weightGrams: 60, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] },
+      { id: "var_bold_30", sku: "REL-BLD-30", label: "30 ml", sizeMl: 30, pricePaise: 29900, compareAtPaise: 44900, available: true, kind: "bottle", weightGrams: 180, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-BLD-30") },
+      { id: "var_bold_50", sku: "REL-BLD-50", label: "50 ml", sizeMl: 50, pricePaise: 44900, compareAtPaise: 67500, available: true, kind: "bottle", weightGrams: 320, preferredFulfillmentProvider: "amazon_mcf", fulfillmentMappings: bottleMappings("REL-BLD-50") }
     ]
   },
   {
@@ -132,7 +140,7 @@ export const demoProducts: Product[] = [
     notes: { top: ["Five openings"], heart: ["Five signatures"], base: ["Five drydowns"] },
     performance: { longevityHours: [5, 12], sillage: "noticeable", seasons: ["All year"], occasions: ["Discovery", "Gifting"], dayNight: "both", wearsLike: "the entire collection in one box" },
     variants: [
-      { id: "var_discovery_10", sku: "REL-DISC-10", label: "5 × 2 ml", sizeMl: 10, pricePaise: 79900, available: true, kind: "discovery", weightGrams: 160, preferredFulfillmentProvider: "manual", fulfillmentMappings: [{ provider: "manual", enabled: true, priority: 100 }] }
+      { id: "var_discovery_40", sku: "REL-DISC-40", label: "Set of 5 · 5 × 8 ml", sizeMl: 40, pricePaise: 39900, compareAtPaise: 59900, available: true, kind: "discovery", weightGrams: 400, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] }
     ]
   }
 ];

@@ -51,7 +51,7 @@ should still provide the original full-resolution files for print/HD use.
 
 | Item | Status |
 |---|---|
-| Prices, MRP, GST treatment | MISSING — current values are demo placeholders, not client data |
+| Prices, MRP, GST treatment | BASE PRICES CLIENT-SUPPLIED (2026-09-18: 8 ml ₹99 · 30 ml ₹299 · 50 ml ₹449 · Set of 5 ₹399). MRP/compare-at values are realistic demo assumptions (~33% off) pending the client's MRP list. All prices inclusive of taxes. |
 | SKUs, sizes (ml), weights | MISSING — current values are demo placeholders |
 | Concentration per product | NOT SUPPLIED (site uses Eau de Parfum / Extrait demo values) |
 | Solo studio photo per product | PARTIAL — posters used as interim product visuals; studio shots requested |

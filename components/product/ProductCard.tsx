@@ -5,8 +5,7 @@ import { formatINR } from "@/lib/money";
 import { ArrowUpRight } from "@/components/ui/Icons";
 
 export function ProductCard({ product, index = 0, feature = false, parallax, reveal, revealDelay }: { product: Product; index?: number; feature?: boolean; parallax?: number; reveal?: string; revealDelay?: number }) {
-  const bottle = product.variants.find((v) => v.kind === "bottle") || product.variants[0];
-  const sample = product.variants.find((v) => v.kind === "sample");
+  const entry = [...product.variants].filter((v) => v.available).sort((a, b) => a.pricePaise - b.pricePaise)[0];
   return <article className={`product-card ${feature ? "product-card-feature" : ""}`} data-parallax={parallax !== undefined ? String(parallax) : undefined} data-reveal={reveal} data-reveal-delay={revealDelay !== undefined ? String(revealDelay) : undefined} style={{ "--accent": product.accent } as React.CSSProperties}>
     <Link href={`/product/${product.slug}`} className="product-art">
       <div className="product-index">{String(index + 1).padStart(2,"0")}</div>
@@ -17,7 +16,7 @@ export function ProductCard({ product, index = 0, feature = false, parallax, rev
     <div className="product-card-copy">
       <div><p className="kicker">{product.eyebrow} · {product.family}</p><h3><Link href={`/product/${product.slug}`}>{product.name}</Link></h3></div>
       <p>{product.shortDescription}</p>
-      <div className="product-card-meta"><span>from {formatINR(sample?.pricePaise || bottle?.pricePaise || 0)}</span><Link href={`/product/${product.slug}`} aria-label={`Discover ${product.name}`}>Discover <ArrowUpRight width={16}/></Link></div>
+      <div className="product-card-meta"><span>from {formatINR(entry?.pricePaise || 0)}{entry?.compareAtPaise ? <s>{formatINR(entry.compareAtPaise)}</s> : null}</span><Link href={`/product/${product.slug}`} aria-label={`Discover ${product.name}`}>Discover <ArrowUpRight width={16}/></Link></div>
     </div>
   </article>;
 }
