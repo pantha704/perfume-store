@@ -6,6 +6,8 @@ export interface Offer {
   cta: string;
   href: string;
   accent: string;
+  /** Background perfume image for the card (client art); moves inversely on hover. */
+  image: string;
 }
 
 /** Home-page offer banners. Client prices; wording can be swapped anytime. */
@@ -18,6 +20,7 @@ export const OFFERS: Offer[] = [
     cta: "Build your discovery",
     href: "/samples",
     accent: "#8d6c4f",
+    image: "/products/relapse/discovery-set.webp",
   },
   {
     id: "entry-size",
@@ -27,6 +30,7 @@ export const OFFERS: Offer[] = [
     cta: "Shop the scents",
     href: "/shop",
     accent: "#53796f",
+    image: "/products/relapse/invictus.webp",
   },
   {
     id: "credit-back",
@@ -36,5 +40,6 @@ export const OFFERS: Offer[] = [
     cta: "How the credit works",
     href: "/samples",
     accent: "#9a7c56",
+    image: "/products/relapse/sandalwood.webp",
   },
 ];
