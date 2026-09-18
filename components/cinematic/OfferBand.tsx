@@ -55,10 +55,14 @@ export function OfferBand() {
     </div>
     <div className="offer-rail" ref={rail}>
       {OFFERS.map((offer, index) => <Link key={offer.id} href={offer.href} className={`offer-card ${index === active ? "active" : ""}`} style={{ "--accent": offer.accent } as CSSProperties}>
-        <span className="offer-kicker">{offer.kicker}</span>
-        <strong>{offer.title}</strong>
-        <p>{offer.note}</p>
-        <span className="offer-cta">{offer.cta} <ArrowUpRight width={16}/></span>
+        <span className="offer-glow" aria-hidden="true" />
+        <span className="offer-image" aria-hidden="true" style={{ backgroundImage: `url(${offer.image})` }} />
+        <div className="offer-body">
+          <span className="offer-kicker">{offer.kicker}</span>
+          <strong>{offer.title}</strong>
+          <p>{offer.note}</p>
+          <span className="offer-cta">{offer.cta} <ArrowUpRight width={16}/></span>
+        </div>
       </Link>)}
     </div>
     <div className="offer-dots" role="tablist" aria-label="Offer slides" hidden={!scrollable}>
