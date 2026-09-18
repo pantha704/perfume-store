@@ -47,3 +47,4 @@
 .offer-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
 .offer-dots button{width:22px;height:3px;border:0;background:var(--line);cursor:pointer;transition:background .3s}
 .offer-dots button.active{background:var(--gold)}
+.offer-tail{flex-grow:0;flex-shrink:0}
