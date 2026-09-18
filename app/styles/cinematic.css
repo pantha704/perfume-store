@@ -20,3 +20,24 @@
 .discovery-price s{font-size:14px;color:var(--ink-soft)}
 .discovery-price i{font-style:normal;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:650}
 .product-card-meta s{margin-left:7px;color:var(--ink-soft);opacity:.75}
+
+/* offer carousel (client batch, Sep 2026) — native snap, editorial cards */
+.offer-band{padding:120px 0 70px}
+.offer-head{width:var(--shell);margin-inline:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:30px}
+.offer-head h2{font-family:var(--display);font-weight:400;font-size:clamp(48px,6vw,96px);line-height:.85;letter-spacing:-.05em;margin:18px 0 0}
+.offer-head h2 em{font-weight:400;color:var(--ink-soft)}
+.offer-nav{display:flex;gap:10px;padding-bottom:12px}
+.offer-nav button{width:46px;height:46px;border:1px solid var(--line);background:transparent;font-size:16px;cursor:pointer;transition:background .3s,color .3s,opacity .3s}
+.offer-nav button:hover:not(:disabled){background:var(--ink);color:var(--cream)}
+.offer-nav button:disabled{opacity:.3;cursor:default}
+.offer-rail{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:46px max(36px,calc((100vw - min(1480px,calc(100vw - 72px)))/2)) 8px;scrollbar-width:none}
+.offer-rail::-webkit-scrollbar{display:none}
+.offer-card{--accent:#ad8a58;scroll-snap-align:start;flex:0 0 min(560px,84vw);min-height:320px;display:flex;flex-direction:column;justify-content:flex-end;gap:14px;padding:38px 34px;border:1px solid var(--line);background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 15%,var(--paper-2)),var(--paper) 72%);transition:opacity .45s var(--ease-out),transform .45s var(--ease-out)}
+.offer-card:not(.active){opacity:.52;transform:scale(.985)}
+.offer-card .offer-kicker{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+.offer-card strong{font-family:var(--display);font-weight:400;font-size:clamp(38px,3.6vw,58px);line-height:.9;letter-spacing:-.04em}
+.offer-card p{margin:0;font-size:13px;color:var(--ink-soft);max-width:400px}
+.offer-card .offer-cta{display:inline-flex;align-items:center;gap:12px;font-size:12px;font-weight:650;border-bottom:1px solid var(--line);padding-bottom:5px;width:max-content}
+.offer-dots{display:flex;gap:8px;justify-content:center;margin-top:24px}
+.offer-dots button{width:22px;height:3px;border:0;background:var(--line);cursor:pointer;transition:background .3s}
+.offer-dots button.active{background:var(--gold)}
