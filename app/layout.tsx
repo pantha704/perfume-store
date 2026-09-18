@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter, Great_Vibes } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { ScrollParallax } from "@/components/layout/ScrollParallax";
@@ -20,5 +21,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width:"device-width", initialScale:1, themeColor:"#0d0c0b", colorScheme:"light" };
 
 export default function RootLayout({children}:{children:React.ReactNode}) {
-  return <html lang="en" className={`${display.variable} ${sans.variable} ${script.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><SmoothScroll/><ScrollParallax/><AnalyticsPageView/><Header/><main id="main">{children}</main><Footer/></body></html>;
+  return <html lang="en" className={`${display.variable} ${sans.variable} ${script.variable}`}><body><a className="skip-link" href="#main">Skip to content</a><SmoothScroll/><ScrollParallax/><AnalyticsPageView/><AnnouncementBar/><Header/><main id="main">{children}</main><Footer/></body></html>;
 }
