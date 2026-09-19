@@ -52,3 +52,4 @@
 .offer-rail{cursor:grab}
 .offer-rail.dragging{cursor:grabbing;user-select:none}
 .offer-rail.dragging .offer-card{pointer-events:none}
+.offer-card{-webkit-user-drag:none}

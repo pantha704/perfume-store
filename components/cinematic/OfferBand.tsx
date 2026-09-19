@@ -120,8 +120,8 @@ export function OfferBand() {
         <button onClick={() => go(active + 1)} disabled={active === OFFERS.length - 1} aria-label="Next offer">→</button>
       </div>
     </div>
-    <div className="offer-rail" ref={rail} onPointerDown={beginDrag}>
-      {OFFERS.map((offer, index) => <Link key={offer.id} href={offer.href} className={`offer-card ${index === active ? "active" : ""}`} style={{ "--accent": offer.accent } as CSSProperties} onClickCapture={(e) => { if (rail.current?.dataset.dragged) { e.preventDefault(); e.stopPropagation(); } }}>
+    <div className="offer-rail" ref={rail} onPointerDown={beginDrag} onDragStart={(e) => e.preventDefault()}>
+      {OFFERS.map((offer, index) => <Link key={offer.id} href={offer.href} draggable={false} className={`offer-card ${index === active ? "active" : ""}`} style={{ "--accent": offer.accent } as CSSProperties} onClickCapture={(e) => { if (rail.current?.dataset.dragged) { e.preventDefault(); e.stopPropagation(); } }}>
         <span className="offer-glow" aria-hidden="true" />
         <span className="offer-image" aria-hidden="true" style={{ backgroundImage: `url(${offer.image})` }} />
         <div className="offer-body">
