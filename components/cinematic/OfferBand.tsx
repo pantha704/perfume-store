@@ -61,6 +61,57 @@ export function OfferBand() {
     setActive(next);
   }
 
+  // Mouse click-and-drag: pointer capture, snap disabled while dragging,
+  // smooth snap to the nearest card on release, click suppressed after a drag.
+  function beginDrag(e: React.PointerEvent<HTMLDivElement>) {
+    if (e.pointerType !== "mouse") return; // touch keeps native swipe
+    const el = rail.current;
+    if (!el) return;
+    const startX = e.clientX;
+    const startLeft = el.scrollLeft;
+    let moved = false;
+    let prevSnap = "";
+
+    const onMove = (ev: PointerEvent) => {
+      const dx = ev.clientX - startX;
+      if (!moved && Math.abs(dx) > 6) {
+        // only now claim the pointer: capturing on pointerdown would steal the
+        // click from the card links (click target becomes the rail).
+        moved = true;
+        prevSnap = el.style.scrollSnapType;
+        el.style.scrollSnapType = "none";
+        el.classList.add("dragging");
+        try { el.setPointerCapture(ev.pointerId); } catch { /* noop */ }
+      }
+      if (moved) el.scrollLeft = startLeft - dx;
+    };
+    const finish = (ev: PointerEvent) => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerup", finish);
+      el.removeEventListener("pointercancel", finish);
+      if (!moved) return;
+      el.style.scrollSnapType = prevSnap;
+      el.classList.remove("dragging");
+      try { el.releasePointerCapture(ev.pointerId); } catch { /* noop */ }
+      el.dataset.dragged = "1";
+      const cards = Array.from(el.querySelectorAll<HTMLElement>(".offer-card"));
+      const leading = el.getBoundingClientRect().left + parseFloat(getComputedStyle(el).paddingLeft);
+      let best = 0;
+      let bestDist = Number.POSITIVE_INFINITY;
+      cards.forEach((card, index) => {
+        const distance = Math.abs(card.getBoundingClientRect().left - leading);
+        if (distance < bestDist) { bestDist = distance; best = index; }
+      });
+      const padL = parseFloat(getComputedStyle(el).paddingLeft);
+      const max = el.scrollWidth - el.clientWidth;
+      el.scrollTo({ left: Math.min(max, Math.max(0, cards[best].offsetLeft - padL)), behavior: "smooth" });
+      window.setTimeout(() => { delete el.dataset.dragged; }, 0);
+    };
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerup", finish);
+    el.addEventListener("pointercancel", finish);
+  }
+
   return <section className="offer-band" aria-label="Current offers">
     <div className="offer-head" data-reveal="up">
       <div><p className="kicker">Running now</p><h2>Worth taking,<br/><em>nothing urgent.</em></h2></div>
@@ -69,8 +120,8 @@ export function OfferBand() {
         <button onClick={() => go(active + 1)} disabled={active === OFFERS.length - 1} aria-label="Next offer">→</button>
       </div>
     </div>
-    <div className="offer-rail" ref={rail}>
-      {OFFERS.map((offer, index) => <Link key={offer.id} href={offer.href} className={`offer-card ${index === active ? "active" : ""}`} style={{ "--accent": offer.accent } as CSSProperties}>
+    <div className="offer-rail" ref={rail} onPointerDown={beginDrag}>
+      {OFFERS.map((offer, index) => <Link key={offer.id} href={offer.href} className={`offer-card ${index === active ? "active" : ""}`} style={{ "--accent": offer.accent } as CSSProperties} onClickCapture={(e) => { if (rail.current?.dataset.dragged) { e.preventDefault(); e.stopPropagation(); } }}>
         <span className="offer-glow" aria-hidden="true" />
         <span className="offer-image" aria-hidden="true" style={{ backgroundImage: `url(${offer.image})` }} />
         <div className="offer-body">
