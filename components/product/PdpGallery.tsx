@@ -24,7 +24,7 @@ export function PdpGallery({ images, alt, orbit, caption }: { images: string[]; 
   return <div className="pdp-art">
     <div className="pdp-art-orbit">{orbit}</div>
     <div className="pdp-halo" />
-    <div className="pdp-slides"
+    <div className="pdp-slides" data-parallax="0.05"
       onTouchStart={(e) => { touchX.current = e.touches[0]?.clientX ?? null; }}
       onTouchEnd={(e) => {
         if (touchX.current === null) return;

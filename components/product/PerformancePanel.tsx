@@ -3,8 +3,8 @@ const sillage = { intimate: 1, close: 2, noticeable: 3, "room-filling": 4 } as c
 export function PerformancePanel({ product }: { product: Product }) {
   const p = product.performance;
   return <div className="performance-panel">
-    <div className="performance-main"><p className="kicker">How it behaves</p><h2>{p.wearsLike}.</h2></div>
-    <div className="performance-data">
+    <div className="performance-main" data-reveal="up"><p className="kicker">How it behaves</p><h2>{p.wearsLike}.</h2></div>
+    <div className="performance-data" data-reveal="up" data-reveal-delay="0.08">
       <div><span>Longevity</span><strong>{p.longevityHours[0]}—{p.longevityHours[1]} h</strong><div className="meter"><i style={{width:`${Math.min(100,p.longevityHours[1]/12*100)}%`}}/></div></div>
       <div><span>Presence</span><strong>{p.sillage}</strong><div className="dot-meter">{[1,2,3,4].map((n)=><i key={n} className={n<=sillage[p.sillage]?"filled":""}/>)}</div></div>
       <div><span>Best in</span><strong>{p.seasons.slice(0,2).join(" · ")}</strong></div>
