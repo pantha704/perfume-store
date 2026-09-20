@@ -12,12 +12,12 @@ export function Stars({ value, label }: { value: number; label?: string }) {
 export async function ReviewsSection({ product }: { product: Product }) {
   const { reviews, average, count } = await getPublishedReviews(product.id);
   return <section className="reviews-section section-shell">
-    <div className="section-title"><p className="kicker">06 / What people say</p>
+    <div className="section-title" data-reveal="up"><p className="kicker">06 / What people say</p>
       <h2>Worn, then<br/>reported back.</h2>
       {count ? <p className="review-summary"><Stars value={average}/> <b>{average} out of 5</b> · {count} review{count === 1 ? "" : "s"}</p>
         : <p className="review-summary">No reviews yet — the first wear is yours to describe.</p>}
     </div>
-    {reviews.length ? <div className="review-grid">{reviews.map((r) => <article className="review-card" key={r.id}>
+    {reviews.length ? <div className="review-grid">{reviews.map((r, i) => <article className="review-card" key={r.id} data-reveal="up" data-reveal-delay={String(Math.min(i, 6) * 0.05)}>
       <header><Stars value={r.rating}/><time dateTime={r.createdAt}>{new Date(r.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</time></header>
       <h3>{r.title || r.authorName}</h3>
       {r.title ? <p className="review-author">{r.authorName}</p> : null}

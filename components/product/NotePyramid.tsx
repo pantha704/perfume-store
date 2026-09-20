@@ -10,7 +10,7 @@ const layers = [
 ];
 export function NotePyramid({ product }: { product: Product }) {
   const [active, setActive] = useState(1);
-  return <div className="note-pyramid-wrap">
+  return <div className="note-pyramid-wrap" data-reveal="up" data-reveal-delay="0.08">
     <div className="note-pyramid" role="tablist" aria-label="Fragrance note timing">{layers.map((layer,index) => <button key={layer.key} role="tab" aria-selected={active===index} onClick={() => setActive(index)} className={active===index ? "active" : ""} style={{width:`${58 + index*20}%`}}><span>{layer.label}</span><b>{layer.time}</b></button>)}</div>
     <div className="note-detail"><div><p className="kicker">{layers[active].kind} · {layers[active].time} · {layers[active].copy}</p><h3>{layers[active].label}</h3></div><div className="note-chips">{product.notes[layers[active].key].map((note) => <Link key={note} href={`/notes/${encodeURIComponent(note.toLowerCase().replaceAll(" ","-"))}`}>{note}</Link>)}</div></div>
   </div>;

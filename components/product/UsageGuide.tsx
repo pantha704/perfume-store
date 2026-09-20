@@ -10,11 +10,11 @@ const SPOTS: Array<[string, string]> = [
 
 export function UsageGuide() {
   return <section className="usage-section section-shell">
-    <div className="section-title"><p className="kicker">05 / How to wear</p>
+    <div className="section-title" data-reveal="up"><p className="kicker">05 / How to wear</p>
       <h2>Where it<br/>should live.</h2>
       <p>Fragrance behaves differently on every placement. These are the seven worth knowing — start with one or two, not all of them.</p>
     </div>
-    <ol className="usage-list">{SPOTS.map(([spot, note], i) => <li key={spot}><span>{String(i + 1).padStart(2, "0")}</span><strong>{spot}</strong><em>{note}</em></li>)}</ol>
-    <p className="usage-note">Two sprays is enough. Never rub — friction flattens the opening and speeds the fade.</p>
+    <ol className="usage-list">{SPOTS.map(([spot, note], i) => <li key={spot} data-reveal="up" data-reveal-delay={String(i * 0.04)}><span>{String(i + 1).padStart(2, "0")}</span><strong>{spot}</strong><em>{note}</em></li>)}</ol>
+    <p className="usage-note" data-reveal="up">Two sprays is enough. Never rub — friction flattens the opening and speeds the fade.</p>
   </section>;
 }
