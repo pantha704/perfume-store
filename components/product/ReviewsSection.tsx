@@ -19,7 +19,8 @@ export async function ReviewsSection({ product }: { product: Product }) {
     </div>
     {reviews.length ? <div className="review-grid">{reviews.map((r) => <article className="review-card" key={r.id}>
       <header><Stars value={r.rating}/><time dateTime={r.createdAt}>{new Date(r.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}</time></header>
-      <h3>{r.authorName}</h3>
+      <h3>{r.title || r.authorName}</h3>
+      {r.title ? <p className="review-author">{r.authorName}</p> : null}
       <p>{r.body}</p>
     </article>)}</div> : null}
     <ReviewForm productId={product.id} productName={product.name}/>
