@@ -14,10 +14,11 @@ export async function POST(request: Request) {
     const user = await authenticatedUser();
     if (!user) return json({ error: "Sign in to write a review." }, 401);
 
-    const body = await safeJson<{ productId?: string; rating?: number; body?: string; displayName?: string; turnstileToken?: string }>(request);
+    const body = await safeJson<{ productId?: string; rating?: number; body?: string; title?: string; displayName?: string; turnstileToken?: string }>(request);
     const productId = (body?.productId || "").trim().slice(0, 80);
     const rating = Math.round(Number(body?.rating));
     const text = (body?.body || "").trim();
+    const reviewTitle = (body?.title || "").trim().slice(0, 80);
     const displayName = (body?.displayName || "").trim().slice(0, 40);
 
     if (!productId) return json({ error: "Product is required." }, 400);
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
       product_id: productId,
       user_id: user.id,
       author_name: displayName,
+      title: reviewTitle || null,
       rating,
       body: text,
       status: "pending",
