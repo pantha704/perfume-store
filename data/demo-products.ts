@@ -68,7 +68,7 @@ export const demoProducts: Product[] = [
     name: "Sandalwood",
     eyebrow: "Earthy · smooth · timeless",
     shortDescription: "Earthy, smooth, timeless. Mysore sandalwood and cedar, rich and creamy.",
-    description: "A rich, warm and creamy sandalwood profile built on Mysore sandalwood and cedar — long-lasting, velvety depth.",
+    description: "Sandalwood is a rich, warm and creamy base note, driven by alpha-santalol and beta-santalol — long-lasting, velvety depth.",
     family: "Woody",
     concentration: "Eau de Parfum",
     image: photo("sandalwood"),
@@ -76,7 +76,7 @@ export const demoProducts: Product[] = [
     gallery: [photo("sandalwood-bottle")],
     accent: "#9a7c56",
     featured: true,
-    notes: { top: ["Mysore sandalwood"], heart: ["Cedar"], base: ["Creamy woods"] },
+    notes: { top: [], heart: ["Cedar"], base: ["Mysore sandalwood"] },
     performance: { longevityHours: [7, 10], sillage: "close", seasons: ["All year", "Monsoon", "Winter"], occasions: ["Office", "Travel", "Dinner"], dayNight: "both", wearsLike: "creamy sandalwood and dry cedar" },
     variants: [
       { id: "var_sandal_08", sku: "REL-SAN-08", label: "8 ml", sizeMl: 8, pricePaise: 9900, compareAtPaise: 14900, available: true, kind: "travel", weightGrams: 60, preferredFulfillmentProvider: "manual", fulfillmentMappings: [...manualOnly] },
