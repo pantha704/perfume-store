@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { getAdminSupabase } from "@/lib/supabase/admin";
-import { isDemoMode } from "@/lib/runtime-env";
 
 export async function authenticatedUser(): Promise<{ id: string; email?: string } | null> {
   const supabase = await createClient();
@@ -10,8 +9,10 @@ export async function authenticatedUser(): Promise<{ id: string; email?: string 
   return { id: String(data.claims.sub), email: typeof data.claims.email === "string" ? data.claims.email : undefined };
 }
 
+// Admin access always requires a real session with role = admin, in demo mode
+// too. Demo mode only relaxes commerce mutations (read-only there); it must
+// never open moderation or the contact inbox to anonymous visitors.
 export async function requireAdmin(): Promise<{ userId: string } | null> {
-  if (isDemoMode()) return { userId: "demo-admin" };
   const user = await authenticatedUser();
   const admin = getAdminSupabase();
   if (!user || !admin) return null;
