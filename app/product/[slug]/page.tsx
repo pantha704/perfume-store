@@ -15,6 +15,11 @@ import { StickyBuyBar } from "@/components/commerce/StickyBuyBar";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductViewTracker } from "@/components/product/ProductViewTracker";
 
+// Reviews are user-submitted and moderated in the admin console, so the page
+// must not be frozen at build time — it was served with a one-year static
+// cache, which meant published reviews never appeared until a redeploy.
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams(){return (await getProducts()).filter(p=>!p.isDiscoverySet).map(p=>({slug:p.slug}));}
 export async function generateMetadata({params}:{params:Promise<{slug:string}>}):Promise<Metadata>{const {slug}=await params;const p=await getProductBySlug(slug);return p?{title:p.name,description:p.shortDescription,openGraph:{title:`${p.name} — Relapse`,description:p.shortDescription,images:[p.image]}}:{};}
 
