@@ -19,8 +19,8 @@ export const OFFERS: Offer[] = [
     note: "All five scents, 5 × 8 ml each. Wear the house for a fortnight before choosing a bottle.",
     cta: "Build your discovery",
     href: "/samples",
-    accent: "#9c9aa0",
-    image: "/products/relapse/lineup.webp",
+    accent: "#ab8d6b",
+    image: "/products/relapse/set-of-five-card.webp",
   },
   {
     id: "entry-size",
