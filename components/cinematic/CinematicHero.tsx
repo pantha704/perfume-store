@@ -148,7 +148,7 @@ export function CinematicHero() {
     <div className="cinematic-sticky">
       <div className="hero-grain" aria-hidden="true" />
       <div className="hero-orbit" data-parallax-end="0.16" aria-hidden="true"><span>01</span><span>EAU DE PARFUM</span><span>INDIA</span></div>
-      <canvas ref={canvas} className="hero-canvas" data-parallax-end="0.09" aria-label="Animated placeholder bottle artwork for Relapse Invictus" />
+      <canvas ref={canvas} className="hero-canvas" data-parallax-end="0.09" aria-label="Animated flacon artwork for Relapse Perfumes" />
       <div data-hero-intro className="hero-intro">
         <p className="kicker light">A fragrance house built in layers</p>
         <h1><span>Leave</span><span>a trace.</span></h1>
@@ -156,7 +156,7 @@ export function CinematicHero() {
       </div>
       <div data-beat="1" className="hero-beat hero-beat-one"><span>01 / OPENING</span><h2>Bright enough<br/>to disappear.</h2><p>Black pepper and bergamot cut through the first minute before the composition slows down.</p></div>
       <div data-beat="2" className="hero-beat hero-beat-two"><span>02 / DRYDOWN</span><h2>Then the room<br/>gets quieter.</h2><p>Suede, cedar and amber sit close. A scent that changes distance instead of volume.</p></div>
-      <div data-hero-final className="hero-final"><p className="kicker light">Invictus · the first edit</p><h2>Wear the<br/><em>afterimage.</em></h2><div className="hero-final-actions"><Link href="/product/invictus" className="button light-button">Discover <ArrowUpRight width={17}/></Link><Link href="/samples" className="text-link-light">Start with 8 ml</Link></div></div>
+      <div data-hero-final className="hero-final"><p className="kicker light">The first edit</p><h2>Wear the<br/><em>afterimage.</em></h2><div className="hero-final-actions"><Link href="/shop" className="button light-button">Discover <ArrowUpRight width={17}/></Link><Link href="/samples" className="text-link-light">Start with 8 ml</Link></div></div>
       <div className="hero-scroll-marker"><span>Scroll to unfold</span><i/></div>
     </div>
   </section>;
