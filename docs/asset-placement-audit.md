@@ -29,7 +29,7 @@ should still provide the original full-resolution files for print/HD use.
 | 15 | 03-product-photos/lineup-sprays-and-bottles.jpg | JPG 1366×768 | Product lineup photo | Collection/studio shot | — | REFERENCE ONLY (candidate for shop/hero band later) |
 | 16 | 03-product-photos/lineup-white-bg.jpg | JPG 1366×768 | Product lineup photo | Collection/studio shot | — | REFERENCE ONLY |
 | 17–21 | 03-product-photos/bottle-and-travel-spray-1..5.jpg | JPG 1600×900 | Studio shots, round bottle + travel spray | Product photography | `public/products/relapse/{slug}-bottle.webp` | USED — labels read the product names; mapped 1=Invictus · 2=Velvet Bloom · 3=Whisky Smoke · 4=Bold Move · 5=Sandalwood; wired as the second PDP gallery slide per product |
-| 22 | 03-product-photos/discovery-set-case.jpg | JPG 900×1600 | Five-spray case photo | Discovery Set product visual | `public/products/relapse/discovery-set.webp` | USED |
+| 22 | 03-product-photos/discovery-set-case.jpg | JPG 900×1600 | Five-spray case photo | Discovery Set product visual | `public/products/relapse/discovery-set.webp` | SUPERSEDED — replaced by the client's newer box photo (set-of-five-card.webp) on 2026-09-29; file kept for reference |
 | 22b | chat (Sep 23) · 03-product-photos/set-of-five-box.jpg | JPG 797×831 | Open box, five labelled sprays, gold emblem | Offer card 1 background | `public/products/relapse/set-of-five-card.webp` | USED — straightened +3.6° clockwise (dominant-line measure), cropped 1.15, accent sampled `#ab8d6b` |
 | 23 | 04-video-audio/video-01.mp4 | MP4 474×850, 3.6 s | Handheld unboxing (black box, gold emblem, spray inside) | Social/unboxing reference | — | REFERENCE ONLY — not suitable as cinematic hero (portrait, handheld, 474 px wide) |
 | 24 | 04-video-audio/voice-note.ogg | Opus audio | Sep 8 conversation about Amazon/order integration | Business context | — | UNUSED (context only) |
@@ -49,6 +49,9 @@ should still provide the original full-resolution files for print/HD use.
 - Hero fallback label updated (RELAPSE / INVICTUS); E2E tests updated to the new slug.
 - Offer card 1 (Set of 5): background swapped to the client's new box photo
   (`set-of-five-card.webp`) — original archived as `03-product-photos/set-of-five-box.jpg`.
+- Discovery Set visual (2026-09-29): now the same box photo (`set-of-five-card.webp`)
+  everywhere the set appears — samples hero, home discovery band, offer card 1 and
+  cart thumbs; the older `discovery-set.webp` case photo is retired.
 
 ## Still placeholder / missing client input
 

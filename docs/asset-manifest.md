@@ -3,7 +3,7 @@
 | Asset | Current | Production requirement |
 |---|---|---|
 | Core bottle images | Client-supplied posters (interim, WhatsApp-compressed) at `public/products/relapse/*.webp` | approved studio front/3-quarter bottle renders, consistent light/backdrop, AVIF/WebP, full resolution |
-| Discovery set | real client photograph (`discovery-set.webp`) | full-resolution original when available |
+| Discovery set | client box photo (`set-of-five-card.webp`, straightened from the Sep 23 photo) | full-resolution original when available |
 | Home hero | interim cinematic render sequence (faceted house flacon, 150/60 frames) | 6s centered bottle turntable frame sequence from the client's studio shoot |
 | PDP scale | reused placeholder bottle | in-hand or known-object photograph |
 | OG | placeholder brand artwork | generated per scent using approved bottle + accent token |
