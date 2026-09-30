@@ -46,7 +46,7 @@ const copy: Record<string, string> = {
   Tuberose: "rich, natural and creamy floral intensity",
   "Rangoon Creeper": "a South Indian flower that changes colour as it blooms — powdery, sweet and fruity at the floral edge",
   "Mysore sandalwood": "a rich, warm and creamy base note, driven by alpha-santalol and beta-santalol — long-lasting, velvety depth",
-  "Milky wood": "smooth, warm and creamy — a milky wood",
+  "a smooth, warm, creamy, and milky-wood": "smooth, warm and creamy — the milky-wood opening",
   "Creamy woods": "soft woods lined with milk and warmth",
   Whisky: "warm boozy vapours, malt and oak",
   "Sharp spice": "a peppery kick that cuts through sweetness",
