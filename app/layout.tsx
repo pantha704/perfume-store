@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://relapse.example"),
   title: { default:"Relapse Perfumes", template:"%s — Relapse Perfumes" },
   description:"Relapse Perfumes — embrace the everyday. Five scents built in layers, with samples, travel sizes and full bottles.",
-  openGraph:{title:"Relapse Perfumes",description:"Embrace the everyday.",type:"website",images:["/og.svg"]},
+  openGraph:{title:"Relapse Perfumes",description:"Embrace the everyday.",type:"website",images:["/og.png"]},
 };
 export const viewport: Viewport = { width:"device-width", initialScale:1, themeColor:"#0d0c0b", colorScheme:"light" };
 
