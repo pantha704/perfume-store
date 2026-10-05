@@ -44,6 +44,8 @@ export interface ProductVariant {
   pricePaise: number;
   compareAtPaise?: number | null;
   available: boolean;
+  /** Units on hand; null = not tracked. 0 renders the variant sold out. */
+  stockQuantity?: number | null;
   kind: VariantKind;
   weightGrams: number;
   preferredFulfillmentProvider?: string;

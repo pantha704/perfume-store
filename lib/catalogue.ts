@@ -8,6 +8,7 @@ interface DbMapping { provider: string; provider_sku: string | null; inventory_s
 interface DbVariant {
   id: string; sku: string; label: string; size_ml: number; price_paise: number; compare_at_paise: number | null;
   is_active: boolean; preferred_fulfillment_provider: string | null; weight_grams: number; kind?: string | null;
+  stock_quantity?: number | null;
   variant_fulfillment_mappings?: DbMapping[];
 }
 interface DbProduct {
@@ -52,7 +53,8 @@ function mapProduct(row: DbProduct): Product {
       sizeMl: v.size_ml,
       pricePaise: v.price_paise,
       compareAtPaise: v.compare_at_paise,
-      available: v.is_active,
+      available: v.is_active && (v.stock_quantity == null || v.stock_quantity > 0),
+      stockQuantity: v.stock_quantity ?? null,
       kind: (v.kind || (v.size_ml <= 2 ? "sample" : v.size_ml <= 15 ? "travel" : "bottle")) as ProductVariant["kind"],
       weightGrams: v.weight_grams || 300,
       preferredFulfillmentProvider: v.preferred_fulfillment_provider || undefined,
