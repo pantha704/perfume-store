@@ -29,7 +29,7 @@ should still provide the original full-resolution files for print/HD use.
 | 15 | 03-product-photos/lineup-sprays-and-bottles.jpg | JPG 1366×768 | Product lineup photo | Collection/studio shot | — | REFERENCE ONLY (candidate for shop/hero band later) |
 | 16 | 03-product-photos/lineup-white-bg.jpg | JPG 1366×768 | Product lineup photo | Collection/studio shot | — | REFERENCE ONLY |
 | 17–21 | 03-product-photos/bottle-and-travel-spray-1..5.jpg | JPG 1600×900 | Studio shots, round bottle + travel spray | Product photography | `public/products/relapse/{slug}-bottle.webp` | USED — labels read the product names; mapped 1=Invictus · 2=Velvet Bloom · 3=Whisky Smoke · 4=Bold Move · 5=Sandalwood; wired as the second PDP gallery slide per product |
-| 22 | 03-product-photos/discovery-set-case.jpg | JPG 900×1600 | Five-spray case photo | Discovery Set product visual | `public/products/relapse/discovery-set.webp` | SUPERSEDED — replaced by the client's newer box photo (set-of-five-card.webp) on 2026-09-29; file kept for reference |
+| 22 | 03-product-photos/discovery-set-case.jpg | JPG 900×1600 | Five-spray case photo | Discovery Set product visual | `public/products/relapse/discovery-set.webp` | SUPERSEDED — replaced by the client's newer box photo (set-of-five-card.webp) on 2026-09-29; file retired Oct 2026 |
 | 22b | chat (Sep 23) · 03-product-photos/set-of-five-box.jpg | JPG 797×831 | Open box, five labelled sprays, gold emblem | Offer card 1 background | `public/products/relapse/set-of-five-card.webp` | USED — straightened +3.6° clockwise (dominant-line measure), cropped 1.15, accent sampled `#ab8d6b` |
 | 23 | 04-video-audio/video-01.mp4 | MP4 474×850, 3.6 s | Handheld unboxing (black box, gold emblem, spray inside) | Social/unboxing reference | — | REFERENCE ONLY — not suitable as cinematic hero (portrait, handheld, 474 px wide) |
 | 24 | 04-video-audio/voice-note.ogg | Opus audio | Sep 8 conversation about Amazon/order integration | Business context | — | UNUSED (context only) |
@@ -63,7 +63,7 @@ should still provide the original full-resolution files for print/HD use.
 | Solo studio photo per product | PARTIAL — posters used as interim product visuals; studio shots requested |
 | Cinematic hero (6 s turntable + macro, 1920/960 frames) | MISSING — client video is an unboxing clip; keep existing fallback |
 | Scale-reference imagery per bottle | MISSING |
-| OG image | still placeholder `/og.svg` |
+| OG image | DONE — `/og.png` (1200x630, browser-rendered from `docs/assets/og-source.svg` + the R mark, Oct 2026) |
 | Legal/business: returns, shipping, privacy, terms, support contacts, merchant details | MISSING (pages remain placeholder-labelled) |
 | "Invictus" name trademark clearance | REQUIRES CLIENT DECISION (also a Paco Rabanne fragrance name) |
 | Velvet Bloom note discrepancy | card says "Damask Rose, Musk"; chat notes say jasmine bud/tuberose/Rangoon Creeper — chat version used; confirm final label copy |

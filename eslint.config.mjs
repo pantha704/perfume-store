@@ -5,7 +5,7 @@ const config = [
   ...nextVitals,
   ...nextTs,
   {
-    ignores: [".next/**", ".open-next/**", "node_modules/**", "playwright-report/**", "test-results/**"]
+    ignores: [".next/**", ".open-next/**", "node_modules/**", "playwright-report/**", "test-results/**", ".gitnexus/**", ".opencode/**"]
   }
 ];
 
