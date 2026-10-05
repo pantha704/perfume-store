@@ -4,20 +4,9 @@ import { requireAdmin } from "@/lib/auth-server";
 import { getAdminSupabase } from "@/lib/supabase/admin";
 import { getFulfillmentProvider } from "@/lib/fulfillment";
 import { isDemoMode } from "@/lib/runtime-env";
+import { nextShipmentStage } from "@/lib/shipment-stages";
 
 export const runtime = "nodejs";
-
-// Shipment stages the merchant advances a manual (India Post) order through.
-// "unfulfilled" is the initial state written at checkout; the customer tracker
-// renders it as the first stage.
-const LADDER = ["processing", "shipped", "in_transit", "out_for_delivery", "delivered"];
-
-function nextStage(current: string): string | null {
-  if (current === "delivered" || current === "cancelled" || current === "attention_required") return null;
-  const idx = LADDER.indexOf(current === "unfulfilled" ? "processing" : current);
-  if (idx === -1) return "shipped";
-  return idx + 1 < LADDER.length ? LADDER[idx + 1] : null;
-}
 
 export async function PATCH(request: Request) {
   try {
@@ -50,7 +39,7 @@ export async function PATCH(request: Request) {
         fulfillment_last_synced_at: new Date().toISOString(),
       };
     } else if (body.action === "advance_status") {
-      const next = nextStage(String(order.fulfillment_status || "unfulfilled"));
+      const next = nextShipmentStage(String(order.fulfillment_status || "unfulfilled"));
       if (!next) return json({ error: "This order cannot advance further." }, 409);
       patch = { fulfillment_status: next, fulfillment_last_synced_at: new Date().toISOString() };
     } else if (body.action === "cancel_fulfillment") {

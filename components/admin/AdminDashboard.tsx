@@ -3,6 +3,8 @@ import { Fragment, useState } from "react";
 import type { Product } from "@/lib/types";
 import type { AdminReview, ContactMessage } from "@/lib/reviews";
 import type { AdminCustomer } from "@/lib/customers";
+import type { AdminActivity, AdminStats } from "@/lib/admin-stats";
+import { nextShipmentStage } from "@/lib/shipment-stages";
 import { formatINR } from "@/lib/money";
 
 interface AdminOrder {
@@ -11,16 +13,12 @@ interface AdminOrder {
   tracking_number?: string | null; tracking_url?: string | null;
 }
 
-const LADDER = ["processing", "shipped", "in_transit", "out_for_delivery", "delivered"];
-function nextStageLabel(status: string): string | null {
-  if (status === "delivered" || status === "cancelled" || status === "attention_required") return null;
-  const current = status === "unfulfilled" ? "processing" : status;
-  const idx = LADDER.indexOf(current);
-  if (idx === -1) return "Shipped";
-  return idx + 1 < LADDER.length ? LADDER[idx + 1].replaceAll("_", " ") : null;
-}
+const nextStageLabel = (status: string): string | null => {
+  const next = nextShipmentStage(status);
+  return next ? next.replaceAll("_", " ") : null;
+};
 
-export function AdminDashboard({ products, orders, reviews, messages, customers, demo }: { products: Product[]; orders: AdminOrder[]; reviews: AdminReview[]; messages: ContactMessage[]; customers: AdminCustomer[]; demo: boolean }) {
+export function AdminDashboard({ products, orders, reviews, messages, customers, stats, activity, demo }: { products: Product[]; orders: AdminOrder[]; reviews: AdminReview[]; messages: ContactMessage[]; customers: AdminCustomer[]; stats: AdminStats; activity: AdminActivity[]; demo: boolean }) {
   const [notice, setNotice] = useState(demo ? "Demo mode: commerce editing is read-only. Reviews, the contact inbox and the customer list are active." : "");
   const [editing, setEditing] = useState<string | null>(null);
 
@@ -74,9 +72,29 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
   return <div className="admin-dashboard">
     <header><div><p className="kicker">Operations console</p><h1>Store control,<br/><em>without clutter.</em></h1></div><span className={`env-pill ${demo ? "demo" : "live"}`}>{demo ? "demo mode" : "connected"}</span></header>
     {notice ? <p className="admin-notice">{notice}</p> : null}
-    <div className="admin-metrics"><div><span>Products</span><strong>{catalogue.length}</strong></div><div><span>SKUs</span><strong>{products.reduce((sum, product) => sum + product.variants.length, 0)}</strong></div><div><span>Reviews pending</span><strong>{pending}</strong></div><div><span>New messages</span><strong>{fresh}</strong></div></div>
+    <div className="admin-kpis">
+      <div><span>Revenue · today</span><strong>{formatINR(stats.revenueTodayPaise)}</strong></div>
+      <div><span>Revenue · 7 days</span><strong>{formatINR(stats.revenue7Paise)}</strong><small>{stats.paid30 ? stats.paid30 + " paid · 30d" : "no paid orders yet"}</small></div>
+      <div><span>Revenue · 30 days</span><strong>{formatINR(stats.revenue30Paise)}</strong><small>{stats.aovPaise ? "avg order " + formatINR(stats.aovPaise) : ""}</small></div>
+      <div><span>Orders · 30 days</span><strong>{stats.orders30}</strong><small>{stats.delivered30} delivered</small></div>
+      <div><span>Catalogue</span><strong>{catalogue.length}</strong><small>{products.reduce((sum, product) => sum + product.variants.length, 0)} SKUs</small></div>
+    </div>
+    <div className="admin-attention">
+      <a href="#admin-orders" className={stats.awaitingDispatch ? "hot" : ""}><b>{stats.awaitingDispatch}</b><span>awaiting dispatch</span></a>
+      <a href="#admin-orders"><b>{stats.inTransit}</b><span>in transit</span></a>
+      <a href="#admin-catalogue" className={stats.soldOut ? "hot" : ""}><b>{stats.soldOut}</b><span>sold out</span></a>
+      <a href="#admin-catalogue" className={stats.lowStock ? "hot" : ""}><b>{stats.lowStock}</b><span>low stock</span></a>
+      <a href="#admin-reviews" className={pending ? "hot" : ""}><b>{pending}</b><span>reviews pending</span></a>
+      <a href="#admin-inbox" className={fresh ? "hot" : ""}><b>{fresh}</b><span>new messages</span></a>
+      <a href="#admin-customers"><b>{stats.newCustomers7}</b><span>new customers · 7d</span></a>
+    </div>
 
     <section className="admin-section">
+      <div className="admin-section-title"><p className="kicker">Log</p><h2>Recent activity</h2></div>
+      {activity.length ? <ul className="admin-feed">{activity.map((entry) => <li key={entry.id}><b>{entry.action.replaceAll("_", " ")}</b><span>{entry.entityType}</span><small>{entry.actor || "—"} · {new Date(entry.createdAt).toLocaleString("en-IN")}</small></li>)}</ul> : <p className="account-empty">No admin actions logged yet.</p>}
+    </section>
+
+    <section className="admin-section" id="admin-catalogue">
       <div className="admin-section-title"><p className="kicker">Catalogue</p><h2>Variants & pricing</h2></div>
       <div className="admin-table">
         <div className="admin-row admin-head admin-row-catalogue"><span>Product / SKU</span><span>Format</span><span>Price</span><span>Stock</span><span>Status</span><span>Edit</span></div>
@@ -101,7 +119,7 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
       </div>
     </section>
 
-    <section className="admin-section">
+    <section className="admin-section" id="admin-orders">
       <div className="admin-section-title"><p className="kicker">Operations</p><h2>Orders & delivery</h2></div>
       {orders.length ? <div className="admin-table">
         <div className="admin-row admin-head"><span>Order</span><span>Customer</span><span>Total</span><span>Payment</span><span>Fulfillment</span></div>
@@ -129,7 +147,7 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
       </div> : <p className="account-empty">No database orders in this environment.</p>}
     </section>
 
-    <section className="admin-section">
+    <section className="admin-section" id="admin-reviews">
       <div className="admin-section-title"><p className="kicker">Content</p><h2>Reviews moderation</h2></div>
       {reviews.length ? <div className="admin-table">
         <div className="admin-row admin-head"><span>Reviewer</span><span>Rating</span><span>Review</span><span>Scent</span><span>Status</span></div>
@@ -143,7 +161,7 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
       </div> : <p className="account-empty">No reviews yet — published reviews appear on the product page, pending ones wait here.</p>}
     </section>
 
-    <section className="admin-section">
+    <section className="admin-section" id="admin-inbox">
       <div className="admin-section-title"><p className="kicker">Inbox</p><h2>Contact messages</h2></div>
       {messages.length ? <div className="admin-table">
         <div className="admin-row admin-head"><span>From</span><span>Contact</span><span>Message</span><span>When</span><span>Status</span></div>
@@ -157,7 +175,7 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
       </div> : <p className="account-empty">Inbox empty.</p>}
     </section>
 
-    <section className="admin-section">
+    <section className="admin-section" id="admin-customers">
       <div className="admin-section-title"><p className="kicker">People</p><h2>Customers</h2></div>
       {customers.length ? <div className="admin-table">
         <div className="admin-row admin-head"><span>Customer</span><span>Email</span><span>Joined</span><span>Orders</span><span>Spent</span></div>
