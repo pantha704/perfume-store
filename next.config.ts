@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
+    // Serve the source files directly. The worker-side optimizer was asked to
+    // UPSCALE pre-optimized webp posters to w=3840 in the isolate, which blew the
+    // 128MB memory ceiling and produced Error 1102 ("exceededResources") under
+    // real traffic. Every image shipped here is already web-optimized by hand
+    // (100-180KB webp), so in-worker resizing buys nothing and costs CPU/memory.
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
       { protocol: "https", hostname: "**.supabase.co" },
