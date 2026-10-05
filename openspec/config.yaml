@@ -1,0 +1,49 @@
+schema: spec-driven
+
+# Project context — constraints that guide OpenSpec artifacts and workflows.
+context: |
+  RELAPSE — client perfume storefront (live, pre-launch). The constraints below
+  are not inferable from the code and must steer every proposal/design/task:
+
+  Delivery discipline
+  - Demo mode stays ON until the owner explicitly approves going live. Never
+    enable live payments or real fulfilment; admin commerce mutations are
+    read-only in demo by design (content moderation works).
+  - Every green `main` merge auto-deploys to Cloudflare Workers and runs a live
+    smoke test; PRs run CI only. Never merge red, never push to `main`.
+
+  Data access contract
+  - Supabase Postgres. The browser holds only the publishable key (auth +
+    RLS-gated reads); all commerce writes go through server routes with the
+    service role. RLS policies are part of the contract — anything needing
+    service-role access must say so.
+  - Admin access always requires a signed-in profile with role = admin; demo
+    mode must never bypass authentication.
+
+  Client content is never invented
+  - Prices/MRPs, addresses, legal policies (returns/terms/privacy), and product
+    notes come from the client verbatim. Missing values are flagged as pending
+    client input, never filled with plausible guesses.
+
+  Verification gate
+  - `npm run verify` (preflight, lint, arch tests, unit, typecheck, build) plus
+    the Playwright e2e suite in CI are the acceptance gate. Type/UI/copy changes
+    also need a rendered check.
+
+rules:
+  proposal:
+    - State what is out of scope
+    - Flag any dependency on pending client input (prices, addresses, policies)
+  design:
+    - Call out RLS / service-role implications and demo-mode behaviour
+  tasks:
+    - Each task must be independently verifiable (command or rendered check)
+
+operations:
+  apply:
+    guidance:
+      - Run `npm run verify` before calling work complete
+      - Ship through a PR; never commit to main directly
+  archive:
+    guidance:
+      - Note the deployed PR number in the archive summary
