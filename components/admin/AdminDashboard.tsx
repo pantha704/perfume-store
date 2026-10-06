@@ -134,7 +134,7 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
         <div className="admin-row admin-head admin-row-catalogue"><span>Product / SKU</span><span>Format</span><span>Price</span><span>Stock</span><span>Status</span><span>Edit</span></div>
         {products.map((product) => <Fragment key={product.id}>
           <div className="admin-row admin-row-catalogue admin-product-row">
-            <span><b>{product.name}</b><small>{product.slug}{product.isDiscoverySet ? " · discovery set" : ""}</small></span>
+            <span><b>{product.name}</b><small>{product.slug}{product.isDiscoverySet ? " · set" : ""}</small></span>
             <span>{product.family}<small>{product.concentration}</small></span>
             <span>{priceRange(product)}</span>
             <span>—</span>
