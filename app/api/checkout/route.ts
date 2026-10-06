@@ -22,6 +22,9 @@ export async function POST(request: Request) {
     const body = await safeJson<Body>(request);
     if (!body || !validAddress(body.address)) return json({ error: "Please provide a complete Indian delivery address." }, 400);
     if (!(await verifyTurnstile(body.turnstileToken || "", request.headers.get("cf-connecting-ip") || undefined))) return json({ error: "Bot verification failed. Please retry." }, 400);
+    // Fail fast while no payment provider is configured (keys pending):
+    // never create orphaned pending orders or surface internal provider errors.
+    if (!isDemoMode()) { try { getPaymentProvider(); } catch { return json({ error: "Online payments are not switched on yet. Please check back shortly." }, 503); } }
 
     const cart = await priceCart(body.lines, body.provider);
     const quote = await quoteShipping(cart, body.address);
