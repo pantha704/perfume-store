@@ -14,7 +14,7 @@ interface DbVariant {
 interface DbProduct {
   id: string; slug: string; name: string; eyebrow: string; short_description: string; description: string;
   family: Product["family"]; concentration: string; image_url: string; image_alt: string; accent: string;
-  notes: Product["notes"]; featured: boolean; metadata?: Record<string, unknown> | null; variants: DbVariant[];
+  notes: Product["notes"]; featured: boolean; is_active: boolean; metadata?: Record<string, unknown> | null; variants: DbVariant[];
 }
 
 function mapProduct(row: DbProduct): Product {
@@ -81,6 +81,19 @@ export const getProducts = cache(async (): Promise<Product[]> => {
   if (error) throw new Error(`Catalogue query failed: ${error.message}`);
   return (data as DbProduct[]).map(mapProduct);
 });
+
+/** Admin catalogue: includes products hidden from the shop (is_active = false)
+ * so the console can list, edit and re-publish them. Storefront reads stay filtered. */
+export async function getAllProductsForAdmin(): Promise<Array<Product & { active: boolean }>> {
+  const supabase = getAdminSupabase();
+  if (isDemoMode() || !supabase) return demoProducts.map((product) => ({ ...product, active: true }));
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, variants(*, variant_fulfillment_mappings(provider,provider_sku,inventory_sku,enabled,priority))")
+    .order("sort_order");
+  if (error) throw new Error(`Catalogue query failed: ${error.message}`);
+  return (data as DbProduct[]).map((row) => ({ ...mapProduct(row), active: row.is_active }));
+}
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const products = await getProducts();
