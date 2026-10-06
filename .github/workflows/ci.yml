@@ -60,7 +60,7 @@ jobs:
       # Public build configuration for the staging Worker. Kept inline so a
       # missing repository variable cannot silently produce a broken build.
       # Server-side secrets live as Cloudflare Worker secrets, not here.
-      NEXT_PUBLIC_DEMO_MODE: "true"
+      NEXT_PUBLIC_DEMO_MODE: "false"
       NEXT_PUBLIC_SITE_URL: "https://relapse-perfume-store.glm-panther.workers.dev"
       NEXT_PUBLIC_BRAND_NAME: "RELAPSE"
       NEXT_PUBLIC_HERO_FRAME_BASE: "/cinematic/invictus/{width}/frame-{index}.webp"

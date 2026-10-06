@@ -36,6 +36,7 @@ function mapProduct(row: DbProduct): Product {
     featured: row.featured,
     story: typeof meta.story === "string" ? meta.story : undefined,
     isDiscoverySet: meta.isDiscoverySet === true,
+    gallery: Array.isArray(meta.gallery) ? meta.gallery.filter((g): g is string => typeof g === "string") : undefined,
     performance: {
       longevityHours: Array.isArray(performance.longevityHours) ? performance.longevityHours as [number, number] : [6, 8],
       sillage: performance.sillage || "noticeable",
