@@ -22,6 +22,8 @@
 .admin-fulfil{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 .admin-fulfil small{color:var(--ink-soft);font-size:11px}
 .admin-fulfil .status-on{align-self:flex-start}
+/* admin data legibility: aligned digits in tables, KPIs and prices */
+.admin-dashboard{font-variant-numeric:tabular-nums}
 /* catalogue editor (Oct 2026): product-level editing, notes, visibility */
 .admin-product-row{background:color-mix(in srgb,var(--gold) 8%,transparent)}
 .admin-product-row>span b{font-size:15px}

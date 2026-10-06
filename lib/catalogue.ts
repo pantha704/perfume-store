@@ -47,7 +47,7 @@ function mapProduct(row: DbProduct): Product {
       perfumer: performance.perfumer,
       year: performance.year,
     },
-    variants: (row.variants || []).map((v): ProductVariant => ({
+    variants: [...(row.variants || [])].sort((a, b) => a.size_ml - b.size_ml || a.label.localeCompare(b.label)).map((v): ProductVariant => ({
       id: v.id,
       sku: v.sku,
       label: v.label,
