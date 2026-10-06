@@ -22,3 +22,17 @@
 .admin-fulfil{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 .admin-fulfil small{color:var(--ink-soft);font-size:8px}
 .admin-fulfil .status-on{align-self:flex-start}
+/* catalogue editor (Oct 2026): product-level editing, notes, visibility */
+.admin-product-row{background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.admin-product-row>span b{font-size:12px}
+.admin-chips{display:inline-flex;flex-wrap:wrap;gap:6px}
+.admin-edit-product{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:end;border-bottom:1px solid var(--line);background:var(--cream);padding:18px}
+.admin-edit-product label{font-size:8px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);display:block}
+.admin-edit-product input,.admin-edit-product select,.admin-edit-product textarea{display:block;width:100%;border:1px solid var(--line);background:transparent;padding:0 10px;margin-top:6px;font-size:12px;border-radius:0;height:38px}
+.admin-edit-product textarea{height:auto;padding:8px 10px;resize:vertical;font-family:inherit;line-height:1.5}
+.admin-edit-product .wide{grid-column:1/-1}
+.admin-edit-checks{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin-top:6px}
+.admin-edit-checks label{display:flex;gap:9px;align-items:center}
+.admin-edit-checks input{width:auto;height:auto;margin:0;padding:0;accent-color:var(--ink)}
+.admin-edit-note{font-size:8px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
+.admin-edit-checks .status-on{margin-left:auto;height:38px}
