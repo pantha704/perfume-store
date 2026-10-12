@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Bag, Menu, X } from "@/components/ui/Icons";
 import { CartBadge } from "@/components/layout/CartBadge";
 
-const nav = [["Shop","/shop"],["Samples","/samples"],["Find your scent","/quiz"],["Our story","/about"]] as const;
+const nav = [["Shop","/shop"],["Samples","/samples"],["Find your scent","/quiz"],["Get your vibe","/get-your-vibe"],["Our story","/about"]] as const;
 
 export function Header() {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ export function Header() {
       </div>
     </header>
     <div className={`mobile-menu ${open ? "is-open" : ""}`} aria-hidden={!open}>
-      <div className="mobile-menu-inner">{nav.map(([label,href], index) => <Link key={href} href={href} onClick={() => setOpen(false)}><span>0{index+1}</span>{label}</Link>)}<Link href="/account" onClick={() => setOpen(false)}><span>05</span>Account</Link></div>
+      <div className="mobile-menu-inner">{nav.map(([label,href], index) => <Link key={href} href={href} onClick={() => setOpen(false)}><span>0{index+1}</span>{label}</Link>)}<Link href="/account" onClick={() => setOpen(false)}><span>06</span>Account</Link></div>
       <p>Small-batch fragrance.<br/>India, after dark.</p>
     </div>
   </>;
