@@ -96,3 +96,69 @@ export async function getRecentActivity(limit = 6): Promise<AdminActivity[]> {
   const mail = new Map((profiles || []).map((p) => [p.id, p.email]));
   return rows.map((row) => ({ id: row.id, action: row.action, entityType: row.entity_type, createdAt: row.created_at, actor: row.actor_user_id ? mail.get(row.actor_user_id) || null : null }));
 }
+
+// --- Traffic (Oct 2026): first-party event roll-up for the console ---------
+
+export interface TrafficStats {
+  pageviews7: number;
+  visitors7: number;
+  pageviews30: number;
+  visitors30: number;
+  productViews30: number;
+  addToCart30: number;
+  checkoutStart30: number;
+  purchases30: number;
+  vibeRequests30: number;
+  quizCompleted30: number;
+  topPaths: Array<{ path: string; views: number }>;
+}
+
+interface TrafficRow {
+  event_name: string;
+  anonymous_id: string | null;
+  properties: Record<string, unknown> | null;
+  created_at: string;
+}
+
+/** Pure aggregation over analytics_events rows (unit-tested). */
+export function summarizeTraffic(rows: TrafficRow[], weekAgoIso: string): TrafficStats {
+  const pages = rows.filter((row) => row.event_name === "page_view");
+  const pages7 = pages.filter((row) => row.created_at >= weekAgoIso);
+  const visitors = (list: TrafficRow[]): number => new Set(list.map((row) => row.anonymous_id).filter(Boolean)).size;
+  const count = (name: string): number => rows.filter((row) => row.event_name === name).length;
+  const byPath = new Map<string, number>();
+  for (const row of pages) {
+    const path = String((row.properties as { path?: unknown } | null)?.path || "/");
+    byPath.set(path, (byPath.get(path) || 0) + 1);
+  }
+  const topPaths = [...byPath.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([path, views]) => ({ path, views }));
+  return {
+    pageviews7: pages7.length,
+    visitors7: visitors(pages7),
+    pageviews30: pages.length,
+    visitors30: visitors(pages),
+    productViews30: count("product_view"),
+    addToCart30: count("add_to_cart"),
+    checkoutStart30: count("checkout_start"),
+    purchases30: count("purchase"),
+    vibeRequests30: count("vibe_submitted"),
+    quizCompleted30: count("quiz_completed"),
+    topPaths
+  };
+}
+
+/** Console traffic roll-up from our own first-party events. Degrades to zeros. */
+export async function getTrafficStats(): Promise<TrafficStats> {
+  const empty: TrafficStats = { pageviews7: 0, visitors7: 0, pageviews30: 0, visitors30: 0, productViews30: 0, addToCart30: 0, checkoutStart30: 0, purchases30: 0, vibeRequests30: 0, quizCompleted30: 0, topPaths: [] };
+  const db = getAdminSupabase();
+  if (!db) return empty;
+  const monthAgo = new Date(Date.now() - 30 * DAY_MS).toISOString();
+  const weekAgo = new Date(Date.now() - 7 * DAY_MS).toISOString();
+  const { data } = await db
+    .from("analytics_events")
+    .select("event_name,anonymous_id,properties,created_at")
+    .gte("created_at", monthAgo)
+    .order("created_at", { ascending: false })
+    .limit(5000);
+  return summarizeTraffic((data || []) as TrafficRow[], weekAgo);
+}

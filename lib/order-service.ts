@@ -129,3 +129,13 @@ export async function readOrderForGuest(publicId: string, token: string) {
   delete safe.guest_access_hash;
   return safe;
 }
+
+/** Admin view of one order (the caller has already verified the admin session). */
+export async function readOrderForAdmin(publicId: string) {
+  const admin = getAdminSupabase(); if (!admin) return null;
+  const { data } = await admin.from("orders").select("*,order_items(*)").eq("public_id", publicId).maybeSingle();
+  if (!data) return null;
+  const safe = { ...data } as Record<string, unknown>;
+  delete safe.guest_access_hash;
+  return safe;
+}

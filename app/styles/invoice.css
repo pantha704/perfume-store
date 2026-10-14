@@ -1,0 +1,32 @@
+/* Invoice / receipt (Oct 2026): printable order document for both sides */
+.invoice-page{max-width:880px;margin:0 auto}
+.invoice-actions{display:flex;gap:12px;justify-content:flex-end;margin-bottom:38px}
+.invoice-head{display:flex;justify-content:space-between;align-items:flex-start;gap:30px;border-bottom:2px solid var(--ink);padding-bottom:22px}
+.invoice-brand{font-family:var(--display);letter-spacing:.24em;font-size:19px;margin:0}
+.invoice-brand span{color:var(--gold)}
+.invoice-brand-sub{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);margin:6px 0 0}
+.invoice-meta{text-align:right;display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--ink-soft)}
+.invoice-meta b{font-size:13px;color:var(--ink);letter-spacing:.02em}
+.invoice-parties{display:grid;grid-template-columns:1fr 1fr;gap:40px;padding:28px 0;border-bottom:1px solid var(--line)}
+.invoice-parties h2{font-size:9px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-soft);margin:0 0 10px;font-weight:600}
+.invoice-parties p{font-size:12.5px;line-height:1.7;margin:0}
+.invoice-table{width:100%;border-collapse:collapse;margin-top:26px;font-size:12.5px;font-variant-numeric:tabular-nums}
+.invoice-table th{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);text-align:left;font-weight:600;border-bottom:1px solid var(--ink);padding:0 0 10px}
+.invoice-table td{border-bottom:1px solid var(--line);padding:12px 0;vertical-align:top}
+.invoice-table .num{text-align:right;white-space:nowrap}
+.invoice-table .sku{color:var(--ink-soft);font-size:11px}
+.invoice-totals{max-width:340px;margin-left:auto;padding-top:20px}
+.invoice-totals>div{display:flex;justify-content:space-between;gap:20px;padding:8px 0;font-size:12.5px;border-bottom:1px solid var(--line)}
+.invoice-totals span{color:var(--ink-soft)}
+.invoice-totals .total{border-bottom:0;padding-top:14px}
+.invoice-totals .total span{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink)}
+.invoice-totals .total b{font-family:var(--display);font-size:24px;font-weight:500}
+.invoice-foot{margin-top:44px;padding-top:20px;border-top:1px solid var(--line);font-size:10.5px;line-height:1.8;color:var(--ink-soft)}
+.invoice-foot a{text-decoration:underline}
+@media print {
+  .site-header,.announce-bar,.site-footer,.skip-link,.invoice-actions{display:none!important}
+  html,body{background:#fff}
+  .commerce-page{padding:0!important;min-height:0}
+  .invoice-page{max-width:none}
+  @page{margin:16mm}
+}

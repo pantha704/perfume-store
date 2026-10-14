@@ -4,6 +4,7 @@ import { getPaymentProvider } from "@/lib/payments";
 import { getAdminSupabase } from "@/lib/supabase/admin";
 import { markOrderPaid, markOrderPaymentFailed } from "@/lib/order-service";
 import { submitPaidOrder } from "@/lib/fulfillment/service";
+import { sendOrderConfirmedEmail } from "@/lib/email-service";
 import { isDemoMode } from "@/lib/runtime-env";
 
 export const runtime = "nodejs";
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
     }
     await markOrderPaid(body.orderId, body.paymentId);
     try { await submitPaidOrder(body.orderId); } catch (error) { console.error("fulfillment submit after payment", error); }
+    try { await sendOrderConfirmedEmail(body.orderId); } catch { /* email must never block the payment flow */ }
     return json({ ok: true });
   } catch (error) { console.error("verify payment", error); return json({ error: "Payment verification failed." }, 500); }
 }
