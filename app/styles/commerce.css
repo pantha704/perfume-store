@@ -38,3 +38,15 @@
 .admin-edit-checks input{width:auto;height:auto;margin:0;padding:0;accent-color:var(--ink)}
 .admin-edit-note{font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.08em}
 .admin-edit-checks .status-on{margin-left:auto;height:44px}
+
+/* order detail + traffic (Oct 2026) */
+.admin-detail-toggle{margin-top:8px}
+.admin-order-detail{display:grid;grid-template-columns:1.2fr .8fr .8fr;gap:30px;background:var(--cream);border-bottom:1px solid var(--line);padding:20px 22px}
+.admin-order-detail h3,.admin-traffic-cols h3{font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:var(--ink-soft);margin:0 0 10px;font-weight:600}
+.admin-order-detail p{font-size:12px;line-height:1.7;margin:0;color:var(--ink-soft)}
+.admin-order-detail p b{color:var(--ink)}
+.admin-order-detail .admin-feed li{padding:8px 0;font-size:12px}
+.admin-order-detail-actions{grid-column:1/-1;display:flex;justify-content:flex-end}
+.admin-kpis-slim{margin:0 0 28px}
+.admin-kpis-slim strong{font-size:32px}
+.admin-traffic-cols{display:grid;grid-template-columns:1.1fr .9fr;gap:44px}

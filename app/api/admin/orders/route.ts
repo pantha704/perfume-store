@@ -5,6 +5,7 @@ import { getAdminSupabase } from "@/lib/supabase/admin";
 import { getFulfillmentProvider } from "@/lib/fulfillment";
 import { isDemoMode } from "@/lib/runtime-env";
 import { nextShipmentStage } from "@/lib/shipment-stages";
+import { sendOrderDispatchedEmail } from "@/lib/email-service";
 
 export const runtime = "nodejs";
 
@@ -54,6 +55,7 @@ export async function PATCH(request: Request) {
     const { data: after, error } = await admin.from("orders").update(patch).eq("id", order.id).select("*").single();
     if (error) return json({ error: error.message }, 400);
     await admin.from("audit_log").insert({ actor_user_id: actor.userId, action: body.action, entity_type: "orders", entity_id: order.id, before_state: order, after_state: after });
+    if (body.action === "dispatch") { try { await sendOrderDispatchedEmail(order.id); } catch { /* email must never block dispatch */ } }
     return json({ ok: true, fulfillment_status: after.fulfillment_status, tracking_number: after.tracking_number });
   } catch (error) { return json({ error: error instanceof Error ? error.message : "Order update failed." }, 400); }
 }

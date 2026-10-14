@@ -1,16 +1,22 @@
 "use client";
+import Link from "next/link";
 import { Fragment, useState } from "react";
 import type { Product } from "@/lib/types";
 import type { AdminReview, ContactMessage } from "@/lib/reviews";
 import type { AdminCustomer } from "@/lib/customers";
-import type { AdminActivity, AdminStats } from "@/lib/admin-stats";
+import type { AdminActivity, AdminStats, TrafficStats } from "@/lib/admin-stats";
 import { nextShipmentStage } from "@/lib/shipment-stages";
 import { formatINR } from "@/lib/money";
 
+interface AdminOrderItem { id: string; product_name: string; variant_label: string; sku: string; quantity: number; unit_price_paise: number; line_total_paise: number; }
+interface AdminShippingAddress { name?: string; addressLine1?: string; addressLine2?: string; city?: string; state?: string; postalCode?: string; }
 interface AdminOrder {
   id: string; public_id: string; created_at: string; customer_name?: string | null; email?: string | null;
   total_paise: number; payment_status: string; fulfillment_status: string;
   tracking_number?: string | null; tracking_url?: string | null;
+  paid_at?: string | null; payment_id?: string | null; payment_provider?: string | null;
+  subtotal_paise?: number; shipping_paise?: number; credit_applied_paise?: number; discount_paise?: number;
+  shipping_address?: AdminShippingAddress | null; order_items?: AdminOrderItem[];
 }
 
 const nextStageLabel = (status: string): string | null => {
@@ -28,10 +34,11 @@ const priceRange = (product: Product): string => {
   return low === high ? low : `${low} – ${high}`;
 };
 
-export function AdminDashboard({ products, orders, reviews, messages, customers, stats, activity, demo }: { products: Array<Product & { active?: boolean }>; orders: AdminOrder[]; reviews: AdminReview[]; messages: ContactMessage[]; customers: AdminCustomer[]; stats: AdminStats; activity: AdminActivity[]; demo: boolean }) {
+export function AdminDashboard({ products, orders, reviews, messages, customers, stats, activity, traffic, demo }: { products: Array<Product & { active?: boolean }>; orders: AdminOrder[]; reviews: AdminReview[]; messages: ContactMessage[]; customers: AdminCustomer[]; stats: AdminStats; activity: AdminActivity[]; traffic: TrafficStats; demo: boolean }) {
   const [notice, setNotice] = useState(demo ? "Demo mode: commerce editing is read-only. Reviews, the contact inbox and the customer list are active." : "");
   const [editing, setEditing] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<string | null>(null);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 
   async function send(url: string, body: unknown): Promise<boolean> {
     const response = await fetch(url, { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -128,6 +135,32 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
       {activity.length ? <ul className="admin-feed">{activity.map((entry) => <li key={entry.id}><b>{entry.action.replaceAll("_", " ")}</b><span>{entry.entityType}</span><small>{entry.actor || "—"} · {new Date(entry.createdAt).toLocaleString("en-IN")}</small></li>)}</ul> : <p className="account-empty">No admin actions logged yet.</p>}
     </section>
 
+    <section className="admin-section" id="admin-traffic">
+      <div className="admin-section-title"><p className="kicker">Insights</p><h2>Traffic</h2></div>
+      <div className="admin-kpis admin-kpis-slim">
+        <div><span>Pageviews · 7d</span><strong>{traffic.pageviews7}</strong><small>{traffic.visitors7} visitors</small></div>
+        <div><span>Pageviews · 30d</span><strong>{traffic.pageviews30}</strong><small>{traffic.visitors30} visitors</small></div>
+        <div><span>Product views · 30d</span><strong>{traffic.productViews30}</strong><small>{traffic.addToCart30} added to bag</small></div>
+        <div><span>Checkouts started · 30d</span><strong>{traffic.checkoutStart30}</strong><small>{traffic.purchases30} purchases</small></div>
+        <div><span>Vibe requests · 30d</span><strong>{traffic.vibeRequests30}</strong><small>{traffic.quizCompleted30} quizzes</small></div>
+      </div>
+      <div className="admin-traffic-cols">
+        <div>
+          <h3>Top pages · 30d</h3>
+          {traffic.topPaths.length ? <ul className="admin-feed">{traffic.topPaths.map((entry) => <li key={entry.path}><b>{entry.path}</b><small>{entry.views} views</small></li>)}</ul> : <p className="account-empty">No pageviews recorded yet.</p>}
+        </div>
+        <div>
+          <h3>Funnel · 30d</h3>
+          <ul className="admin-feed">
+            <li><b>Product views</b><small>{traffic.productViews30}</small></li>
+            <li><b>Added to bag</b><small>{traffic.addToCart30}</small></li>
+            <li><b>Checkout started</b><small>{traffic.checkoutStart30}</small></li>
+            <li><b>Purchases</b><small>{traffic.purchases30}</small></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section className="admin-section" id="admin-catalogue">
       <div className="admin-section-title"><p className="kicker">Catalogue</p><h2>Products & pricing</h2></div>
       <div className="admin-table">
@@ -189,23 +222,44 @@ export function AdminDashboard({ products, orders, reviews, messages, customers,
         {orders.map((order) => {
           const next = nextStageLabel(order.fulfillment_status);
           const canDispatch = order.payment_status === "paid" && (order.fulfillment_status === "unfulfilled" || order.fulfillment_status === "processing");
-          return <div className="admin-row" key={order.id}>
-            <span><b>{order.public_id}</b><small>{new Date(order.created_at).toLocaleString("en-IN")}</small></span>
-            <span>{order.customer_name}<small>{order.email}</small></span>
-            <span>{formatINR(order.total_paise)}</span>
-            <span>{order.payment_status}</span>
-            <span className="admin-fulfil">
-              <i className={order.fulfillment_status === "delivered" ? "status-on" : "status-off"}>{order.fulfillment_status.replaceAll("_", " ")}</i>
-              {order.tracking_number ? <small># {order.tracking_number}</small> : null}
-              {canDispatch ? <form className="admin-dispatch" onSubmit={dispatch(order.id)}>
-                <input name="tracking" placeholder="India Post tracking no." disabled={demo} required minLength={4}/>
-                <input name="trackingUrl" placeholder="tracking URL (optional)" disabled={demo}/>
-                <input name="eta" type="date" disabled={demo} aria-label="Estimated delivery"/>
-                <button className="status-on" type="submit" disabled={demo}>Mark dispatched</button>
-              </form> : null}
-              {next ? <button className="status-on" disabled={demo} onClick={() => void send("/api/admin/orders", { orderId: order.id, action: "advance_status" })}>Advance → {next}</button> : null}
-            </span>
-          </div>;
+          const address = order.shipping_address || {};
+          return <Fragment key={order.id}>
+            <div className="admin-row">
+              <span><b>{order.public_id}</b><small>{new Date(order.created_at).toLocaleString("en-IN")}</small><button className="status-on admin-detail-toggle" type="button" onClick={() => setExpandedOrder(expandedOrder === order.id ? null : order.id)}>{expandedOrder === order.id ? "close" : "details"}</button></span>
+              <span>{order.customer_name}<small>{order.email}</small></span>
+              <span>{formatINR(order.total_paise)}</span>
+              <span>{order.payment_status}{order.paid_at ? <small>{new Date(order.paid_at).toLocaleString("en-IN")}</small> : null}</span>
+              <span className="admin-fulfil">
+                <i className={order.fulfillment_status === "delivered" ? "status-on" : "status-off"}>{order.fulfillment_status.replaceAll("_", " ")}</i>
+                {order.tracking_number ? <small># {order.tracking_number}</small> : null}
+                {canDispatch ? <form className="admin-dispatch" onSubmit={dispatch(order.id)}>
+                  <input name="tracking" placeholder="India Post tracking no." disabled={demo} required minLength={4}/>
+                  <input name="trackingUrl" placeholder="tracking URL (optional)" disabled={demo}/>
+                  <input name="eta" type="date" disabled={demo} aria-label="Estimated delivery"/>
+                  <button className="status-on" type="submit" disabled={demo}>Mark dispatched</button>
+                </form> : null}
+                {next ? <button className="status-on" disabled={demo} onClick={() => void send("/api/admin/orders", { orderId: order.id, action: "advance_status" })}>Advance → {next}</button> : null}
+              </span>
+            </div>
+            {expandedOrder === order.id ? <div className="admin-order-detail">
+              <div>
+                <h3>Items</h3>
+                <ul className="admin-feed">{(order.order_items || []).map((item) => <li key={item.id}><b>{item.product_name} — {item.variant_label}</b><span>{item.sku}</span><small>{item.quantity} × {formatINR(item.unit_price_paise)} = {formatINR(item.line_total_paise)}</small></li>)}</ul>
+              </div>
+              <div>
+                <h3>Delivery</h3>
+                <p>{address.name}<br/>{address.addressLine1}{address.addressLine2 ? <><br/>{address.addressLine2}</> : null}<br/>{address.city}, {address.state} {address.postalCode}<br/>{order.customer_name}<br/>{order.email}</p>
+              </div>
+              <div>
+                <h3>Payment</h3>
+                <p>{order.payment_status}{order.payment_provider ? <> · {order.payment_provider}</> : null}{order.payment_id ? <><br/>ref {order.payment_id}</> : null}</p>
+                <p>Subtotal {formatINR(order.subtotal_paise || 0)} · Delivery {formatINR(order.shipping_paise || 0)}{order.credit_applied_paise ? <> · Credit −{formatINR(order.credit_applied_paise)}</> : null}{order.discount_paise ? <> · Discount −{formatINR(order.discount_paise)}</> : null} · <b>Total {formatINR(order.total_paise)}</b></p>
+              </div>
+              <div className="admin-order-detail-actions">
+                <Link className="status-on" href={`/order/${encodeURIComponent(order.public_id)}/invoice`}>Open invoice</Link>
+              </div>
+            </div> : null}
+          </Fragment>;
         })}
       </div> : <p className="account-empty">No database orders in this environment.</p>}
     </section>
